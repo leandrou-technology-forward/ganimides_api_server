@@ -181,7 +181,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     "application_id": module_id,
     "application_name": 'ganimidesServer',
     "application_title": 'ganimides server',
@@ -200,8 +200,8 @@ master_configuration = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
-thisApp.pair_application_configuration(master_configuration, module_identityDictionary)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+thisApp.pair_application_configuration(module_configuration, module_identityDictionary)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

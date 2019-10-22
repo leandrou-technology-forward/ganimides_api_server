@@ -58,7 +58,7 @@ module_identityDictionary = {
     'module_log_file_name':module_log_file_name,
     'module_errors_file_name':module_errors_file_name,
 }
-master_configuration = {
+module_configuration = {
 }
 #module config options
 logServices_config_dictionary = {}
@@ -1338,9 +1338,9 @@ def new_config_version(VersionString='', print_enabled=None, filelog_enabled=Non
     global config_versionString
     global module_ProgramName
     global module_BaseTimeStamp
-    global master_configuration
+    global module_configuration
     global module_id
-    if master_configuration.get('initialized'):
+    if module_configuration.get('initialized'):
         config_version = config_version + 1
         config_versionStr = VersionString 
         config_versionString = config_version_string(config_version=config_version, config_versrionString=config_versionStr, module_BaseTimeStamp='')
@@ -2069,14 +2069,14 @@ def config_version_string(config_version=None, config_versrionString='', module_
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration=master_configuration, print_enabled=None, filelog_enabled=None)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration=module_configuration, print_enabled=None, filelog_enabled=None)
 cfgfile=module_ProgramName+'.cfg'
 set_global_vars_from_dictionary(logServices_config_dictionary,cfgfile)
-logServices_config_dictionary = retrieve_configuration_from_file(logServicesConfigFile, this_configuration=master_configuration, module_identityDictionary=module_identityDictionary, print_enabled=None, filelog_enabled=None,ignoreWarning=True)
+logServices_config_dictionary = retrieve_configuration_from_file(logServicesConfigFile, this_configuration=module_configuration, module_identityDictionary=module_identityDictionary, print_enabled=None, filelog_enabled=None,ignoreWarning=True)
 #make_colors_array()
-if logServices_config_dictionary != master_configuration:
+if logServices_config_dictionary != module_configuration:
     set_global_vars_from_dictionary(logServices_config_dictionary,logServicesConfigFile)
-    master_configuration = logServices_config_dictionary.copy()
+    module_configuration = logServices_config_dictionary.copy()
 if thisApp.get_module_debug_level(module_id):
     msg=f'{module_id}: log_file set to [ {log_file_name}]'
     log_message(msg,msgType='info',msgOffset='+1',msgColor=module_color)

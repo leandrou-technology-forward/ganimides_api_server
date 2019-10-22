@@ -72,7 +72,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     }
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -353,17 +353,17 @@ def get_validated_phone_number(number):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 functions_ids=['ALL']
 exclude_functions_ids = ['set_msgID']
 thisModuleObj = sys.modules[__name__]
-master_configuration.update({'sms_apis':[]})
-master_configuration = add_apis_to_configuration('sms_apis', master_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
-thisApp.pair_module_configuration('sms_apis',master_configuration)
+module_configuration.update({'sms_apis':[]})
+module_configuration = add_apis_to_configuration('sms_apis', module_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
+thisApp.pair_module_configuration('sms_apis',module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 if get_module_debug_level(module_id) > 0:
     apis = thisApp.application_configuration.get('sms_apis', {})

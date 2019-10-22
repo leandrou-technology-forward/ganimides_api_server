@@ -67,7 +67,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     }
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1089,16 +1089,16 @@ def set_msgID(api_name,api_action,api_entity):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-(print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(master_configuration)
+(print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 functions_ids=['ALL']
 exclude_functions_ids = ['set_msgID']
 thisModuleObj = sys.modules[__name__]
-master_configuration = add_apis_to_configuration('openbanking_apis', master_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
-thisApp.pair_module_configuration('openbanking_apis',master_configuration)
+module_configuration = add_apis_to_configuration('openbanking_apis', module_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON)
+thisApp.pair_module_configuration('openbanking_apis',module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 if get_module_debug_level(module_id) > 0:
     apis = thisApp.application_configuration.get('openbanking_apis', {})

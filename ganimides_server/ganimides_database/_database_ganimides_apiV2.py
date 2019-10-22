@@ -2456,7 +2456,7 @@ def dbapi_cleanup_bank_authorizations(session):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.CONSOLE_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=True)
+#module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.CONSOLE_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=True)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

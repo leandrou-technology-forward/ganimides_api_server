@@ -189,7 +189,7 @@ master_api_properties= {
 master_api_usage = {}
 master_http_ok_code = requests.codes.ok
 http_ok_codes = (200,201)
-master_configuration = {
+module_configuration = {
 'bankID': 'bankofcyprus',
 'bankName': 'Bank of Cyprus',
 "bankIdString": "BOC",
@@ -1314,7 +1314,7 @@ def log_api_setup_param(what='', val='', api=''):
 ################################################################
 ################################################################
 def boc_get_configuration_param(what, configuration, thisbank):
-    #global master_configuration
+    #global module_configuration
     process = 'boc_get_configuration_param'
     paramvalue = configuration.get(what, '')
     log_api_config_param(thisbank, what, paramvalue)
@@ -1322,7 +1322,7 @@ def boc_get_configuration_param(what, configuration, thisbank):
     return paramvalue
 ################################################################
 def boc_get_parameters(api):
-    global master_configuration
+    global module_configuration
     global active_api
     global active_api_prog
     global master_api_prefix
@@ -1348,25 +1348,25 @@ def boc_get_parameters(api):
     ts = time.time()
     currentTimeStamp = datetime.datetime.fromtimestamp(ts).strftime('%Y%m%d%H%M%S')
 
-    bankID=boc_get_configuration_param('bankID',master_configuration,bankCodeName)
+    bankID=boc_get_configuration_param('bankID',module_configuration,bankCodeName)
     log_api_setup_param('bankID',bankID)
 
-    bankName=boc_get_configuration_param('bankName',master_configuration,bankCodeName)
-    redirect_uri=boc_get_configuration_param('redirect_uri',master_configuration,bankCodeName)
-    app_name=boc_get_configuration_param('application_name',master_configuration,bankCodeName)
-    client_id=boc_get_configuration_param('client_id',master_configuration,bankCodeName)
-    client_secret=boc_get_configuration_param('client_secret',master_configuration,bankCodeName)
-    api_uri=boc_get_configuration_param('api_uri',master_configuration,bankCodeName)
-    journeyId=boc_get_configuration_param('journeyId',master_configuration,bankCodeName)
-    originSourceId=boc_get_configuration_param('originSourceId',master_configuration,bankCodeName)
-    originChannelId=boc_get_configuration_param('originChannelId',master_configuration,bankCodeName)
-    originDeptId=boc_get_configuration_param('originDeptId',master_configuration,bankCodeName)
-    originUserId=boc_get_configuration_param('originUserId',master_configuration,bankCodeName)
-    originEmployeeId=boc_get_configuration_param('originEmployeeId',master_configuration,bankCodeName)
-    originTerminalId=boc_get_configuration_param('originTerminalId',master_configuration,bankCodeName)
-    correlationId=boc_get_configuration_param('correlationId',master_configuration,bankCodeName)
-    lang=boc_get_configuration_param('lang',master_configuration,bankCodeName)
-    tppId=boc_get_configuration_param('tppId',master_configuration,bankCodeName)
+    bankName=boc_get_configuration_param('bankName',module_configuration,bankCodeName)
+    redirect_uri=boc_get_configuration_param('redirect_uri',module_configuration,bankCodeName)
+    app_name=boc_get_configuration_param('application_name',module_configuration,bankCodeName)
+    client_id=boc_get_configuration_param('client_id',module_configuration,bankCodeName)
+    client_secret=boc_get_configuration_param('client_secret',module_configuration,bankCodeName)
+    api_uri=boc_get_configuration_param('api_uri',module_configuration,bankCodeName)
+    journeyId=boc_get_configuration_param('journeyId',module_configuration,bankCodeName)
+    originSourceId=boc_get_configuration_param('originSourceId',module_configuration,bankCodeName)
+    originChannelId=boc_get_configuration_param('originChannelId',module_configuration,bankCodeName)
+    originDeptId=boc_get_configuration_param('originDeptId',module_configuration,bankCodeName)
+    originUserId=boc_get_configuration_param('originUserId',module_configuration,bankCodeName)
+    originEmployeeId=boc_get_configuration_param('originEmployeeId',module_configuration,bankCodeName)
+    originTerminalId=boc_get_configuration_param('originTerminalId',module_configuration,bankCodeName)
+    correlationId=boc_get_configuration_param('correlationId',module_configuration,bankCodeName)
+    lang=boc_get_configuration_param('lang',module_configuration,bankCodeName)
+    tppId=boc_get_configuration_param('tppId',module_configuration,bankCodeName)
 
     functionRequest = 'get'
     apilevel = ''
@@ -3139,8 +3139,8 @@ def boc_xget_subscriptionId(access_token,SubscriptionRequest):
     return subscriptionId
 ################################################################
 def boc_get_customer_authorization(access_token,subscriptionId):
-    global master_configuration
-    secs_to_wait =  master_configuration.get('secs_to_wait_for_authorization',120)
+    global module_configuration
+    secs_to_wait =  module_configuration.get('secs_to_wait_for_authorization',120)
     
     #start
     api='get_customer_authorization'
@@ -3151,9 +3151,9 @@ def boc_get_customer_authorization(access_token,subscriptionId):
     log_api_input_param('subscriptionId',subscriptionId)
     # log_api_input_param('secs_to_wait_for_authorization',secs_to_wait)
 
-    bankID = master_configuration.get('bankID')
-    http_result_file = master_configuration.get('http_result_file','code.txt')
-    http_result_folder = master_configuration.get('http_result_folder','')
+    bankID = module_configuration.get('bankID')
+    http_result_file = module_configuration.get('http_result_file','code.txt')
+    http_result_folder = module_configuration.get('http_result_folder','')
     # log_api_input_param('bankID',bankID)
     # log_api_input_param('http_result_file',http_result_file)
     # log_api_input_param('http_result_folder',http_result_folder)
@@ -3438,9 +3438,9 @@ def boc_check_subscription(subscriptionId):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #################################################################################################
 def clear_authorization_result_file():
-    global master_configuration
+    global module_configuration
     global module_id
-    result_file_name =  master_configuration.get('authorization_code_result_file','code.txt')
+    result_file_name =  module_configuration.get('authorization_code_result_file','code.txt')
 
     process='clear_authorization_result_file'
     
@@ -3463,11 +3463,11 @@ def clear_authorization_result_file():
                 pass
 ################################################################
 def wait_for_authorization(secs_to_wait=120):
-    global master_configuration
+    global module_configuration
     global module_id
     process='wait_for_client_authorization'
     
-    result_file_name =  master_configuration.get('authorization_code_result_file','code.txt')
+    result_file_name =  module_configuration.get('authorization_code_result_file','code.txt')
 
     log_message_subprocess_running('authorization_code_result_file =',result_file_name,caller_module=module_id,caller_function=process)
     log_message_subprocess_running('secs_to_wait =',secs_to_wait,caller_module=module_id,caller_function=process)
@@ -3500,7 +3500,7 @@ def wait_for_authorization(secs_to_wait=120):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=None, filelog_enabled=None, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=None, filelog_enabled=None, handle_as_init=False)
 msg = f'openBanking module [{module_id}] [[version {module_version}]] loaded.'
 if thisApp.get_module_debug_level(module_id):
     log_message(msg)

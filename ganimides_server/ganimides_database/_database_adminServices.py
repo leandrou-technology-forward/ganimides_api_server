@@ -894,8 +894,8 @@ module_identityDictionary = {
     'module_version':module_version,
     'module_is_externally_configurable':False,
     }
-master_configuration = {}
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+module_configuration = {}
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

@@ -110,7 +110,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     "application_id": module_id,
     "application_name": 'ganimides_restapi_server',
     "application_title": 'ganimides api server',
@@ -128,7 +128,7 @@ _process_call_area = {}
 ##########################################################################################################################
 ##########################################################################################################################
 def get_headers(thisRequest):
-    if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+    if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
         print('\nheaders(request.headers):')
     request_headers_json={}
     ix = 0
@@ -138,14 +138,14 @@ def get_headers(thisRequest):
         v = entry[1]
         key=k.lower().replace('-','_')
         request_headers_json.update({key:v})
-        if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+        if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
             msg=f"o header param {ix}: {entry[0]} ({key}) = {v}"
             print('   ',msg)
     #print(request_headers_json)
     return request_headers_json
 ##########################################################################################################################
 def get_params(thisRequest):
-    if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+    if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
         print('\nparams(request.arqs):')
     request_params_json = {}
     # print(request.args)
@@ -155,7 +155,7 @@ def get_params(thisRequest):
         v = thisRequest.args.get(k)
         key = k.lower().replace('-', '_')
         request_params_json.update({key: v})
-        if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+        if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
             msg=f"o param {ix}: {k} ({key}) = {v}"
             print('   ',msg)
     #print('request_params_json-->',request_params_json)
@@ -430,7 +430,7 @@ def before_request_func():
     # print(f'{Fore.RED}==>{Fore.RESET} sexy_session {Fore.YELLOW}{sexy_session.headers.get("dbsession_id")}{Fore.RESET}')
     # print(f'{Fore.RED}==>{Fore.RESET} session_id {Fore.YELLOW}{session["session_id"]}{Fore.RESET}')
 
-    if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'): quick_log('START :' + g.msg_id)
+    if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'): quick_log('START :' + g.msg_id)
     
     # randomness=random.randint(0, 5)
     # time.sleep(random.randint(0, randomness))
@@ -521,23 +521,23 @@ def before_request_func():
             if not db.dbapi_token_is_valid(g.dbsession,access_token,caller_area=_process_call_area):
                 reply={'api_status':'error','api_message':'invalid or expired access token'}
                 return make_response(jsonify(reply), 403)
-            if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+            if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
                 print('OK, authentication_method:',authentication_method)
         elif authentication_method == 'registered_application_credentials':
             if not db.dbapi_application_credentials_are_valid(g.dbsession,application_name,application_client_id,application_client_secretKey,caller_area=_process_call_area):
                 reply={'api_status':'error','api_message':'invalid or expired application credentials'}
                 return make_response(jsonify(reply), 403)
-            if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+            if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
                 print('OK, authentication_method:',authentication_method)
         elif authentication_method == 'none':
             application_name=request_params_json.get('application_name','')
             application_client_id=request_params_json.get('application_client_id','')
             application_client_secretKey = request_params_json.get('application_client_secretKey', '')
-            if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+            if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
                 print('OK, authentication_method:',authentication_method)
         else:
             reply={'api_status':'error','api_message':'invalid authentication method'}
-            if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
+            if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'):
                 print('INVALID authentication_method:',authentication_method)
             return make_response(jsonify(reply), 403)
 ##########################################################################################################################
@@ -551,7 +551,7 @@ def after_request_func(response):
     #print(g.caller_area)
     #debug_level = g.caller_area.get('debug_level')
     #print('after_request', dbsession.session_id, x, username)
-    if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'): quick_log('FINISH:' + g.msg_id)
+    if thisApp.get_module_debug_level(module_id) or module_configuration.get('DEBUG_ON'): quick_log('FINISH:' + g.msg_id)
     try:
         dbsession.close()
     except:
@@ -2466,8 +2466,8 @@ def delete_employee(employee_id):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, handle_as_init=False)
-thisApp.pair_application_configuration(master_configuration, module_identityDictionary)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, handle_as_init=False)
+thisApp.pair_application_configuration(module_configuration, module_identityDictionary)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

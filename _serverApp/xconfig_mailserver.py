@@ -5,7 +5,7 @@ module_ProgramName = os.path.splitext(os.path.basename(__file__))[0]
 module_id = '{}'.format(module_ProgramName)
 module_version = 0.1
 from _appEnvironment import application_configuration
-# from _debugServices import master_configuration as debug_templates
+# from _debugServices import module_configuration as debug_templates
 from _colorServices import colorized_string,Fore
 from _processServices import build_process_signature, build_process_call_area
 from _logProcessServices import log_process_start, log_process_finish, log_process_message,log_process_parameter

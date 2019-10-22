@@ -7,7 +7,7 @@ module_version = 0.1
 
 import _appEnvironment as thisApp
 from _appEnvironment import FILELOG_ON,CONSOLE_ON,DEBUG_ON,log_file_name,log_errors_file_name,collect_function_names_from_module
-from _debugServices import master_configuration as debug_templates
+from _debugServices import module_configuration as debug_templates
 from _colorServices import colorized_string
 from _moduleConfigServices import retrieve_module_configuration
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -228,8 +228,8 @@ module_identityDictionary = {
     'module_version':module_version,
     'module_is_externally_configurable':False,
     }
-master_configuration = {}
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+module_configuration = {}
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 msg = f'module [{module_id}] [[version {module_version}]] loaded.'
 # if thisApp.get_module_debug_level(module_id): 
 #     print_message(msg)

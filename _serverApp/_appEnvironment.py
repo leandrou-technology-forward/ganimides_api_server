@@ -58,7 +58,7 @@ module_identityDictionary = {
     'module_errors_file_name':module_errors_file_name,
     'module_is_externally_configurable':module_is_externally_configurable,
 }
-master_configuration = {
+module_configuration = {
 }
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -718,7 +718,7 @@ module_identityDictionary = {
     'module_version':module_version,
     'module_is_externally_configurable':False,
     }
-master_configuration = {}
+module_configuration = {}
 if not application_configuration.get('modules'):
     application_configuration.update({'modules':{}})
     application_configuration.update({'modules_loaded':{}})
@@ -726,7 +726,7 @@ if not application_configuration.get('modules'):
 application_configuration['modules'].update({module_folder:module_id})
 application_configuration['modules_loaded'].update({module_id: module_folder})
 
-#master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+#module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.DEBUG_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 # msg = f'module [{module_id}] [[version {module_version}]] loaded.'
 # if thisApp.get_module_debug_level(module_id): 
 #     print_message(msg)

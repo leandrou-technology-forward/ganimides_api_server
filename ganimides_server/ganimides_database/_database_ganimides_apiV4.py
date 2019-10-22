@@ -70,7 +70,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     'consolelog_enabled': consolelog_enabled,
     'filelog_enabled': filelog_enabled,
     'log_file':module_log_file_name,
@@ -3075,7 +3075,7 @@ def set_api_debug_level(api_name, this_debug=None,dbsession=None):
     else:
         session_debug_level = -1
 
-    api_name_debug = master_configuration['apis'].get(api_name, {}).get('debug_level', -1)
+    api_name_debug = module_configuration['apis'].get(api_name, {}).get('debug_level', -1)
     debug_level1 = get_debug_option_as_level(api_name_debug)
 
     try:
@@ -3176,9 +3176,9 @@ def test_api(caller_dict={}, call_level=-1,debug_level=-1):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled, handle_as_init=False)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-(print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(master_configuration)
+(print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 #build the api configuration
@@ -3187,14 +3187,14 @@ thisModuleObj = sys.modules[__name__]
 dbapis = thisApp.collect_function_names_from_module(thisModuleObj, functions_ids)
 dbapis.sort()
 
-if not master_configuration.get('apis'):
-    master_configuration.update({'apis': {}})
+if not module_configuration.get('apis'):
+    module_configuration.update({'apis': {}})
     
 for ix in range(0, len(dbapis)):
     api_name=dbapis[ix]
-    if not master_configuration.get('apis',{}).get(api_name):
+    if not module_configuration.get('apis',{}).get(api_name):
         api_entry = {dbapis[ix]: {'status': 'Active', 'version':'1.1','debug_level': -1}}
-        master_configuration['apis'].update(api_entry)
+        module_configuration['apis'].update(api_entry)
 
 if get_debug_option_as_level(thisApp.application_configuration.database_api_debug) > 0:
     for ix in range(0, len(dbapis)):
@@ -3203,7 +3203,7 @@ if get_debug_option_as_level(thisApp.application_configuration.database_api_debu
         msg=f'from [[{module_id}]] import [{dbapis[ix]}]'
         log_message(msg)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 msg = f'database [ganimides] [[[[module [{module_id}] loaded]]]] with [[version {module_version}]]'
 log_message(msg)

@@ -70,7 +70,7 @@ module_identityDictionary = {
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = {
+module_configuration = {
     }
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -3278,19 +3278,19 @@ def integer_to_geoloc(i):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled, handle_as_init=False)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# (print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(master_configuration)
+# (print_enabled, filelog_enabled, log_file, errors_file,consolelog_enabled)=get_globals_from_configuration(module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 functions_ids=['dbapi_']
 exclude_functions_ids = ['set_msgID', 'set_process_debug_level']
 thisModuleObj = sys.modules[__name__]
-master_configuration.update({'database_apis':[]})
-master_configuration = add_apis_to_configuration('database_apis', master_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
-thisApp.pair_module_configuration('database_apis',master_configuration)
+module_configuration.update({'database_apis':[]})
+module_configuration = add_apis_to_configuration('database_apis', module_configuration, thisModuleObj, functions_ids, exclude_functions_ids)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
+thisApp.pair_module_configuration('database_apis',module_configuration)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-save_module_configuration(module_identityDictionary, master_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
+save_module_configuration(module_identityDictionary, module_configuration, print_enabled=consolelog_enabled, filelog_enabled=filelog_enabled)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 if get_module_debug_level(module_id) > 0:
     apis = thisApp.application_configuration.get('database_apis', {})

@@ -49,7 +49,7 @@ module_identityDictionary = {
     'module_errors_file_name':module_errors_file_name,
     'module_is_externally_configurable':module_is_externally_configurable,
 }
-master_configuration = {
+module_configuration = {
 }
 # log options
 log_print_enabled=CONSOLE_ON
@@ -112,7 +112,7 @@ def retrieve_module_configuration(module_file, module_identityDictionary, module
     file_delete(module_errors_file_name,print_enabled=print_enabled,filelog_enabled=filelog_enabled, ignoreWarning=True)
 
     if not module_is_externally_configurable:
-        msg=f'[{module_id}] is not externally configurable. in-module master_configuration will be used and stored.'
+        msg=f'[{module_id}] is not externally configurable. in-module module_configuration will be used and stored.'
         log_message(msg, msgType='', print_enabled=print_enabled, filelog_enabled=filelog_enabled, msgCategory='DEBUG')
 
     new_module_configuration = retrieve_module_configuration_from_file(module_file, module_configuration, module_identityDictionary, print_enabled=print_enabled, filelog_enabled=filelog_enabled,external_config_enabled=module_is_externally_configurable)
@@ -360,31 +360,31 @@ def save_module_configuration(module_identityDictionary, module_configuration={}
     msg = f'module [{module_id}] configuration saved in [{configFile}]'
     log_message(msg, msgType='info',print_enabled=print_enabled, filelog_enabled=filelog_enabled)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-def get_globals_from_configuration(master_configuration):
+def get_globals_from_configuration(module_configuration):
     print_enabled = None
     filelog_enabled = None
     consolelog_enabled = None
     log_file = ''
     errors_file=''
-    if not master_configuration.get('filelog_enabled') == None:
-        filelog_enabled = master_configuration.get('filelog_enabled')
-    if not master_configuration.get('print_enabled') == None:
-        print_enabled = master_configuration.get('print_enabled')
-    if not master_configuration.get('consolelog_enabled') == None:
-        print_enabled = master_configuration.get('consolelog_enabled')
-    if not master_configuration.get('console_on') == None:
-        print_enabled = master_configuration.get('console_on')
+    if not module_configuration.get('filelog_enabled') == None:
+        filelog_enabled = module_configuration.get('filelog_enabled')
+    if not module_configuration.get('print_enabled') == None:
+        print_enabled = module_configuration.get('print_enabled')
+    if not module_configuration.get('consolelog_enabled') == None:
+        print_enabled = module_configuration.get('consolelog_enabled')
+    if not module_configuration.get('console_on') == None:
+        print_enabled = module_configuration.get('console_on')
     consolelog_enabled = print_enabled
-    if master_configuration.get('log_file'):
-        if master_configuration.get('log_file').upper()=='MODULE':
+    if module_configuration.get('log_file'):
+        if module_configuration.get('log_file').upper()=='MODULE':
             log_file = module_log_file_name
         else:
-            log_file = master_configuration.get('log_file')
-    if master_configuration.get('errors_file'):
-        if master_configuration.get('errors_file').upper() == 'MODULE':
+            log_file = module_configuration.get('log_file')
+    if module_configuration.get('errors_file'):
+        if module_configuration.get('errors_file').upper() == 'MODULE':
             errors_file = module_errors_file_name
         else:
-            errors_file = master_configuration.get('errors_file')
+            errors_file = module_configuration.get('errors_file')
     return (print_enabled, filelog_enabled, log_file, errors_file, consolelog_enabled)
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -462,7 +462,7 @@ def dict_of_dicts_merge(x, y):
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=CONSOLE_ON, filelog_enabled=FILELOG_ON)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=CONSOLE_ON, filelog_enabled=FILELOG_ON)
 msg = f'module [{module_id}] [[version {module_version}]] loaded.'
 if thisApp.get_module_debug_level(module_id): 
     print_message(msg)

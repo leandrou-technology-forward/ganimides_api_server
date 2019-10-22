@@ -48,7 +48,7 @@ module_identityDictionary = {
     'module_debug_level':module_debug_level,
     'module_is_externally_configurable':module_is_externally_configurable,
 }
-master_configuration = {
+module_configuration = {
     'database_name': 'ganimides',
     'database_folder': 'C:\\Users\\User\\Documents\\my Projects\\Systems_Development\\Development_Environment',
     'database_user': 'admin',
@@ -89,15 +89,15 @@ def reorganization_process_tokens():
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 time_start = datetime.datetime.now()
-master_configuration = retrieve_module_configuration(__file__, module_identityDictionary, master_configuration, print_enabled=thisApp.CONSOLE_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
+module_configuration = retrieve_module_configuration(__file__, module_identityDictionary, module_configuration, print_enabled=thisApp.CONSOLE_ON, filelog_enabled=thisApp.FILELOG_ON, handle_as_init=False)
 moduleObj = sys.modules[__name__]
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-dbName = master_configuration.get('database_name')
-dbUser = master_configuration.get('database_user','')
-dbPass = master_configuration.get('database_pass','')
-dbFolder = master_configuration.get('database_folder')
+dbName = module_configuration.get('database_name')
+dbUser = module_configuration.get('database_user','')
+dbPass = module_configuration.get('database_pass','')
+dbFolder = module_configuration.get('database_folder')
 if not dbName:
     msg = f'database_name not defined in config file'
     log_message(msg, msgType='error',print_enabled=True, filelog_enabled=True)

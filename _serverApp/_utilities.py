@@ -59,7 +59,7 @@ module_identityDictionary = {
     'module_log_file_name':module_log_file_name,
     'module_errors_file_name':module_errors_file_name,
 }
-master_configuration = {
+module_configuration = {
 }
 # log options
 log_print_enabled=CONSOLE_ON
@@ -1285,7 +1285,7 @@ module_identityDictionary = {
     'module_version':module_version,
     'module_is_externally_configurable':False,
     }
-master_configuration = {}
+module_configuration = {}
 if not application_configuration.get('modules'):
     application_configuration.update({'modules':{}})
     application_configuration.update({'modules_loaded':{}})
