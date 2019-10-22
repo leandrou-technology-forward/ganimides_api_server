@@ -10,6 +10,7 @@ if not (os.path.dirname(__file__) in sys.path): sys.path.append(os.path.dirname(
 import datetime
 import secrets
 import requests
+# import git
 
 import random
 import time
@@ -610,6 +611,18 @@ def after_request_func(response):
 def open_test_page():
     msg_page = message_page(message_type='warning', message='adadadasdsad asdadasdasd', secondary_message='', message_description='', title='zzzzzzzzz', application_name='ganimides', application_color='', application_copywrite='', application_logo='', error_code=111)
     return msg_page
+#############################################################################
+# @app.route('/webhook', methods=['POST'])
+# def webhook():
+#     if request.method == 'POST':
+#         repo = git.Repo('./myproject')
+#         origin = repo.remotes.origin
+#         repo.create_head('master', 
+#     origin.refs.master).set_tracking_branch(origin.refs.master).checkout()
+#         origin.pull()
+#         return '', 200
+#     else:
+#         return '', 400
 #############################################################################
 @app.route('/confirmation/<token>/email1', methods = ['GET','PUT','POST','PATCH'])
 def email_confirm1(token):
