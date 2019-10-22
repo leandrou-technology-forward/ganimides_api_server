@@ -505,7 +505,7 @@ def before_request_func():
         ################################
 
         if device_uid:
-            db.dbapi_device_log(dbsession, device_uid, application_name, geolocation_lat, geolocation_lon, client_id, caller_area=_process_call_area)
+            db.dbapi_device_log(g.dbsession, device_uid, application_name, geolocation_lat, geolocation_lon, client_id, caller_area=_process_call_area)
 
         authentication_method = request.headers.get('Authentication-Method')
         if authentication_method == 'access_token':
@@ -518,13 +518,13 @@ def before_request_func():
             # if not token_is_valid(access_token):
             #     reply={'api_status':'error','api_message':'expired access token used for authentication'}
             #     return make_response(jsonify(reply), 403)
-            if not db.dbapi_token_is_valid(dbsession,access_token,caller_area=_process_call_area):
+            if not db.dbapi_token_is_valid(g.dbsession,access_token,caller_area=_process_call_area):
                 reply={'api_status':'error','api_message':'invalid or expired access token'}
                 return make_response(jsonify(reply), 403)
             if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
                 print('OK, authentication_method:',authentication_method)
         elif authentication_method == 'registered_application_credentials':
-            if not db.dbapi_application_credentials_are_valid(dbsession,application_name,application_client_id,application_client_secretKey,caller_area=_process_call_area):
+            if not db.dbapi_application_credentials_are_valid(g.dbsession,application_name,application_client_id,application_client_secretKey,caller_area=_process_call_area):
                 reply={'api_status':'error','api_message':'invalid or expired application credentials'}
                 return make_response(jsonify(reply), 403)
             if thisApp.get_module_debug_level(module_id) or master_configuration.get('DEBUG_ON'):
@@ -633,7 +633,7 @@ def email_confirm1(token):
     dbsession = g.dbsession
     
     conf_record = {'email': email,'token':token}
-    confirm_result = db.dbapi_email_confirmation(dbsession, conf_record, caller_area=_process_call_area)
+    confirm_result = db.dbapi_email_confirmation(g.dbsession, conf_record, caller_area=_process_call_area)
     if not confirm_result.get('api_status')=='success':
         msg = f"confirmation failed:{confirm_result.get('api_message','?')}.Retry"
         resp = make_response(jsonify(msg), 200)
@@ -643,7 +643,7 @@ def email_confirm1(token):
     client_id = confirm_result.get('api_data', {}).get('client_id')
     update_record = {'client_id': client_id, 'email_confirmed': 1, 'email_confirmed_timestamp': datetime.datetime.utcnow(), 'confirmed': 1}
 
-    dbreply=db.dbapi_client(dbsession, 'confirm', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'confirm', update_record, caller_area=_process_call_area)
     if not dbreply.get('api_status')=='success':
         msg = f"confirmation failed:{dbreply.get('api_message','?')}.Retry"
         resp = make_response(jsonify(msg), 200)
@@ -679,10 +679,10 @@ def email_confirm(token):
 
     #validate token
     verification_filter = {'verification_token': token,'verification_entity':'email'}
-    res = db.dbapi_verification(dbsession, 'get', verification_filter, caller_area=_process_call_area)
+    res = db.dbapi_verification(g.dbsession, 'get', verification_filter, caller_area=_process_call_area)
     if not res.get('api_status')=='success':
         verification_filter = {'verification_id': token}
-        res = db.dbapi_verification(dbsession, 'get', verification_filter, caller_area=_process_call_area)
+        res = db.dbapi_verification(g.dbsession, 'get', verification_filter, caller_area=_process_call_area)
         if not res.get('api_status')=='success':
             msg = 'invalid access'
             error_code = 599
@@ -755,7 +755,7 @@ def email_confirm(token):
 
             confirmation_url = url_for('email_confirm', token='-token-', _external=True)
             try:
-                email_reply = api.emailapi_send_email_confirmation_email(dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
+                email_reply = api.emailapi_send_email_confirmation_email(g.dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
             except Exception as error_text:
                 msg = 'system error. fail to send email'
                 error_code = 502
@@ -796,7 +796,7 @@ def email_confirm(token):
 
         #ok, verify button pressed
         conf_record = {'verification_code': input_code, 'verification_token': token, 'verification_id': verification_id}
-        confirm_result = db.dbapi_email_confirmation(dbsession, conf_record, caller_area=_process_call_area)
+        confirm_result = db.dbapi_email_confirmation(g.dbsession, conf_record, caller_area=_process_call_area)
         if not confirm_result.get('api_status')=='success':
             error = f"your verification failed. Retry"
             error_code=82
@@ -837,10 +837,10 @@ def mobile_confirm(token):
 
     #validate token
     verification_filter = {'verification_token': token,'verification_entity':'mobile'}
-    res = db.dbapi_verification(dbsession, 'get', verification_filter, caller_area=_process_call_area)
+    res = db.dbapi_verification(g.dbsession, 'get', verification_filter, caller_area=_process_call_area)
     if not res.get('api_status')=='success':
         verification_filter = {'verification_id': token}
-        res = db.dbapi_verification(dbsession, 'get', verification_filter, caller_area=_process_call_area)
+        res = db.dbapi_verification(g.dbsession, 'get', verification_filter, caller_area=_process_call_area)
         if not res.get('api_status')=='success':
             msg = 'invalid access'
             error_code = 599
@@ -913,7 +913,7 @@ def mobile_confirm(token):
 
             confirmation_url = url_for('mobile_confirm', token='-token-', _external=True)
             try:
-                sms_reply = api.smsapi_send_mobile_confirmation_sms(dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
+                sms_reply = api.smsapi_send_mobile_confirmation_sms(g.dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
             except Exception as error_text:
                 msg = 'system error. fail to send sms'
                 error_code = 504
@@ -954,7 +954,7 @@ def mobile_confirm(token):
 
         #ok, verify button pressed
         conf_record = {'verification_code': input_code, 'verification_token': token, 'verification_id': verification_id}
-        confirm_result = db.dbapi_mobile_confirmation(dbsession, conf_record, caller_area=_process_call_area)
+        confirm_result = db.dbapi_mobile_confirmation(g.dbsession, conf_record, caller_area=_process_call_area)
         if not confirm_result.get('api_status')=='success':
             error = f"your verification failed. Retry"
             error_code=82
@@ -985,7 +985,7 @@ def get_authorization_code_from_boc_client():
         reply = {'api_status': 'error', 'api_message': msg}
         return make_response(jsonify(reply), 400)
 
-    result = api.banksubscription_receive_authorization_from_client(dbsession,bank_code, authorization_code, caller_area=_process_call_area)
+    result = api.banksubscription_receive_authorization_from_client(g.dbsession,bank_code, authorization_code, caller_area=_process_call_area)
     if not result.get('api_status')=='success':
         msg = result.get('api_message', '?')
         msg = f"your authorization for an app to use your {bank_code} account(s) FAILED. retry"
@@ -1001,7 +1001,7 @@ def get_authorization_code_from_boc_client():
         msg_desc=f"app {application_name} will never use your account(s) without your permission."
         # resp = make_response(jsonify(msg), 200)
         # resp.headers['Content-type'] = 'text/html'
-        app=db.dbapi_application(dbsession, 'get', {'application_name':application_name}, caller_area=_process_call_area)
+        app=db.dbapi_application(g.dbsession, 'get', {'application_name':application_name}, caller_area=_process_call_area)
         if app:
             app_redirect = app.get('application_redirect_uri')
             if app_redirect:
@@ -1054,7 +1054,7 @@ def get_access_token():
     for k in request_params_json:
         v=request_params_json.get(k)
         request_data.update({k: v})
-    res = db.dbapi_token_get_access_token(dbsession, request_data, caller_area=_process_call_area)
+    res = db.dbapi_token_get_access_token(g.dbsession, request_data, caller_area=_process_call_area)
     return jsonify( res )
 #############################################################################
 
@@ -1070,12 +1070,12 @@ def get_access_token():
 #############################################################################
 @app.route('/openbanking/api/v1/apis/<api_id>', methods = ['GET'])
 def get_api(api_id):
-    dbreply=db.dbapi_api(dbsession, 'get', {'api_id':api_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'get', {'api_id':api_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/banks/<bank_id>', methods = ['GET'])
 def get_bank(bank_id):
-    dbreply=db.dbapi_bank(dbsession, 'get', {'bank_id':bank_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'get', {'bank_id':bank_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 
@@ -1088,12 +1088,12 @@ def get_bank(bank_id):
 #############################################################################
 @app.route('/openbanking/api/v1/apis', methods = ['GET'])
 def get_apis_list():
-    dbreply = db.dbapi_api(dbsession, 'LIST', {}, caller_area=_process_call_area)
+    dbreply = db.dbapi_api(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##############################################################################
 @app.route('/openbanking/api/v1/banks', methods = ['GET'])
 def get_banks_list():
-    dbreply = db.dbapi_bank(dbsession, 'LIST', {}, caller_area=_process_call_area)
+    dbreply = db.dbapi_bank(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##############################################################################
 @app.route('/openbanking/api/v1/clients', methods = ['GET'])
@@ -1101,7 +1101,7 @@ def get_clients_list():
     _process_call_area=g.caller_area
     dbsession = g.dbsession
     # filterString=f"all"
-    dbreply = db.dbapi_client(dbsession, 'LIST', {}, caller_area=_process_call_area)
+    dbreply = db.dbapi_client(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##############################################################################
 @app.route('/openbanking/api/v1/merchants', methods = ['GET'])
@@ -1109,7 +1109,7 @@ def get_merchants_list():
     _process_call_area=g.caller_area
     dbsession = g.dbsession
     # filterString=f"all"
-    dbreply = db.dbapi_merchant(dbsession, 'LIST', {}, caller_area=_process_call_area)
+    dbreply = db.dbapi_merchant(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales', methods = ['GET'])
@@ -1117,7 +1117,7 @@ def get_pointofsales_list():
     _process_call_area=g.caller_area
     dbsession = g.dbsession
     # filterString=f"all"
-    dbreply = db.dbapi_pointofsale(dbsession, 'LIST', {}, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
     return jsonify( dbreply )
 
 #############################################################################
@@ -1145,7 +1145,7 @@ def new_subscription():
     if not record_data.get('email'):
         reply={'api_status':'error','api_message':'[email] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_subscription(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_subscription(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/subscriptions/<subscription_id>', methods = ['GET'])
@@ -1153,7 +1153,7 @@ def new_subscription():
 def get_subscription(subscription_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_subscription(dbsession, 'get', {'subscription_id':subscription_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_subscription(g.dbsession, 'get', {'subscription_id':subscription_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/subscriptions/<subscription_id>', methods = ['PUT','POST','PATCH'])
@@ -1165,7 +1165,7 @@ def update_subscription(subscription_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'subscription_id':subscription_id})
-    dbreply=db.dbapi_subscription(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_subscription(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/subscriptions/<subscription_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1178,7 +1178,7 @@ def unregister_subscription(subscription_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'subscription_id':subscription_id})
-    dbreply=db.dbapi_subscription(dbsession, 'unregister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_subscription(g.dbsession, 'unregister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/subscriptions/<subscription_id>', methods = ['DELETE'])
@@ -1186,7 +1186,7 @@ def unregister_subscription(subscription_id):
 def delete_subscription(subscription_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_subscription(dbsession, 'delete', {'subscription_id':subscription_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_subscription(g.dbsession, 'delete', {'subscription_id':subscription_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 
@@ -1212,7 +1212,7 @@ def new_api():
     if not record_data.get('api_name'):
         reply={'api_status':'error','api_message':'[name] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_api(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/apis/<api_id>', methods = ['PUT','POST','PATCH'])
@@ -1224,7 +1224,7 @@ def update_api(api_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'api_id':api_id})
-    dbreply=db.dbapi_api(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/apis/<api_id>/activate', methods = ['PUT','POST','PATCH'])
@@ -1233,7 +1233,7 @@ def update_api(api_id):
 def confirm_api(api_id):
     update_record = request.json
     update_record.update({'api_id':api_id})
-    dbreply=db.dbapi_api(dbsession, 'activate', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'activate', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/apis/<api_id>/deactivate', methods = ['PUT','POST','PATCH'])
@@ -1242,14 +1242,14 @@ def confirm_api(api_id):
 def unregister_api(api_id):
     update_record = request.json
     update_record.update({'api_id':api_id})
-    dbreply=db.dbapi_api(dbsession, 'deactivate', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'deactivate', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/apis/<api_id>', methods = ['DELETE'])
 #@auth.login_required
 #@auth.admin_required
 def delete_api(api_id):
-    dbreply=db.dbapi_api(dbsession, 'delete', {'api_id':api_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_api(g.dbsession, 'delete', {'api_id':api_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##########################################################################################################################################################
 
@@ -1273,7 +1273,7 @@ def new_bank():
     if not record_data.get('bank_BIC'):
         reply={'api_status':'error','api_message':'[bank_BIC] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_bank(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/banks/<bank_id>', methods = ['PUT','POST','PATCH'])
@@ -1285,7 +1285,7 @@ def update_bank(bank_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'bank_id':bank_id})
-    dbreply=db.dbapi_bank(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/banks/<bank_id>/activate', methods = ['PUT','POST','PATCH'])
@@ -1294,7 +1294,7 @@ def update_bank(bank_id):
 def confirm_bank(bank_id):
     update_record = request.json
     update_record.update({'bank_id':bank_id})
-    dbreply=db.dbapi_bank(dbsession, 'activate', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'activate', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/banks/<bank_id>/deactivate', methods = ['PUT','POST','PATCH'])
@@ -1303,14 +1303,14 @@ def confirm_bank(bank_id):
 def unregister_bank(bank_id):
     update_record = request.json
     update_record.update({'bank_id':bank_id})
-    dbreply=db.dbapi_bank(dbsession, 'deactivate', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'deactivate', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/banks/<bank_id>', methods = ['DELETE'])
 #@auth.login_required
 #@auth.admin_required
 def delete_bank(bank_id):
-    dbreply=db.dbapi_bank(dbsession, 'delete', {'bank_id':bank_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_bank(g.dbsession, 'delete', {'bank_id':bank_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##########################################################################################################################################################
 
@@ -1337,7 +1337,7 @@ def new_application():
     if not record_data.get('email'):
         reply={'api_status':'error','api_message':'[email] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_application(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>', methods = ['GET'])
@@ -1345,7 +1345,7 @@ def new_application():
 def get_application(application_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_application(dbsession, 'get', {'application_id':application_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'get', {'application_id':application_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>', methods = ['PUT','POST','PATCH'])
@@ -1357,7 +1357,7 @@ def update_application(application_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'application_id':application_id})
-    dbreply=db.dbapi_application(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1370,7 +1370,7 @@ def unregister_application(application_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'application_id':application_id})
-    dbreply=db.dbapi_application(dbsession, 'unregister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'unregister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>', methods = ['DELETE'])
@@ -1378,7 +1378,7 @@ def unregister_application(application_id):
 def delete_application(application_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_application(dbsession, 'delete', {'application_id':application_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'delete', {'application_id':application_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>/apis/<api_name>/register', methods = ['PUT','POST','PATCH'])
@@ -1389,7 +1389,7 @@ def application_api_register(application_id,api_name):
     update_record = request.json
     update_record.update({'application_id':application_id})
     update_record.update({'api_name':api_name})
-    dbreply=db.dbapi_application(dbsession, 'api_register', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'api_register', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/applications/<application_id>/apis/<api_name>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1400,7 +1400,7 @@ def application_api_unregister(application_id,api_name):
     update_record = request.json
     update_record.update({'application_id':application_id})
     update_record.update({'api_name':api_name})
-    dbreply=db.dbapi_application(dbsession, 'api_unregister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_application(g.dbsession, 'api_unregister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 
@@ -1518,14 +1518,14 @@ def new_client():
     if not record_data.get('email'):
         reply={'api_status':'error','api_message':'[email] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_client(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>', methods = ['GET'])
 def get_client(client_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_client(dbsession, 'get', {'client_id':client_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'get', {'client_id':client_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>', methods = ['PUT','POST','PATCH'])
@@ -1537,7 +1537,7 @@ def update_client(client_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'client_id':client_id})
-    dbreply=db.dbapi_client(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 #not used
@@ -1547,7 +1547,7 @@ def confirm_client(client_id):
     dbsession = g.dbsession
     update_record = request.json
     update_record.update({'client_id':client_id})
-    dbreply=db.dbapi_client(dbsession, 'confirm', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'confirm', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 ##############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/confirmation_email', methods = ['GET','PUT','POST','PATCH'])
@@ -1557,7 +1557,7 @@ def send_client_confirmation_email(client_id):
     application_name = thisApp.application_name
     confirmation_url = url_for('email_confirm', token='#TOKEN#', _external=True)
     try:
-        reply = api.emailapi_send_email_confirmation_email(dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
+        reply = api.emailapi_send_email_confirmation_email(g.dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
         if not reply.get('api_status') == 'success':
             print (reply)
     except Exception as error_text:
@@ -1572,7 +1572,7 @@ def send_application_client_confirmation_email(client_id,application_name):
     dbsession = g.dbsession
     confirmation_url = url_for('email_confirm', token='-token-', _external=True)
     try:
-        reply = api.emailapi_send_email_confirmation_email(dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
+        reply = api.emailapi_send_email_confirmation_email(g.dbsession, client_id, application_name, confirmation_url, caller_area=_process_call_area)
         if not reply.get('api_status') == 'success':
             print (reply)
     except Exception as error_text:
@@ -1588,7 +1588,7 @@ def send_client_confirmation_sms(client_id):
     application_name=thisApp.application_name
     confirmation_url = url_for('mobile_confirm', token='-token-', _external=True)
     try:
-        reply = api.smsapi_send_mobile_confirmation_sms(dbsession, client_id, application_name, confirmation_url,caller_area=_process_call_area)
+        reply = api.smsapi_send_mobile_confirmation_sms(g.dbsession, client_id, application_name, confirmation_url,caller_area=_process_call_area)
     except Exception as error_text:
         msg = f'send sms system error: {error_text}'
         #log_process_message('', 'error', msg,**_process_call_area)
@@ -1601,7 +1601,7 @@ def send_application_client_confirmation_sms(client_id,application_name):
     dbsession = g.dbsession
     confirmation_url = url_for('mobile_confirm', token='-token-', _external=True)
     try:
-        reply = api.smsapi_send_mobile_confirmation_sms(dbsession, client_id, application_name, confirmation_url,caller_area=_process_call_area)
+        reply = api.smsapi_send_mobile_confirmation_sms(g.dbsession, client_id, application_name, confirmation_url,caller_area=_process_call_area)
     except Exception as error_text:
         msg = f'send sms system error: {error_text}'
         #log_process_message('', 'error', msg,**_process_call_area)
@@ -1614,21 +1614,21 @@ def unregister_client(client_id):
     dbsession = g.dbsession
     update_record = request.json
     update_record.update({'client_id':client_id})
-    dbreply=db.dbapi_client(dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>', methods = ['DELETE'])
 def delete_client(client_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_client(dbsession, 'delete', {'client_id':client_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_client(g.dbsession, 'delete', {'client_id':client_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_email>/subscriptions', methods = ['GET'])
 def client_subscriptions(client_email):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    dbreply=db.dbapi_application_USER(dbsession, 'list', {},{'email':client_email}, caller_area=_process_call_area)
+    dbreply=db.dbapi_application_USER(g.dbsession, 'list', {},{'email':client_email}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/applications/<application_name>/register', methods = ['PUT','POST','PATCH'])
@@ -1638,7 +1638,7 @@ def client_application_register(client_id, application_name):
     action_filter = {'client_id': client_id, 'application_name': application_name, 'user_role': 'user'}
     input_dict = {'status': 'Active'}
  
-    reply = api.dbapi_application_USER(dbsession, 'refresh', input_dict, action_filter, caller_area=_process_call_area)
+    reply = api.dbapi_application_USER(g.dbsession, 'refresh', input_dict, action_filter, caller_area=_process_call_area)
 
     return jsonify(reply)
 #############################################################################
@@ -1649,7 +1649,7 @@ def client_application_unregister(client_id, application_name):
     action_filter = {'client_id': client_id, 'application_name': application_name, 'user_role': 'user'}
     input_dict = {'status': 'InActive'}
 
-    reply = api.dbapi_application_USER(dbsession, 'deactivate', input_dict, action_filter, caller_area=_process_call_area)
+    reply = api.dbapi_application_USER(g.dbsession, 'deactivate', input_dict, action_filter, caller_area=_process_call_area)
 
     return jsonify(reply)
 #############################################################################
@@ -1672,7 +1672,7 @@ def banksubscription_register(client_id, application_name,bank_id):
     payments_currency = subscription_options.get('payments_currency', 'EUR')
     payments_amount = subscription_options.get('payments_amount', 10)
     
-    reply = api.banksubscription_register(dbsession, 
+    reply = api.banksubscription_register(g.dbsession, 
         client_id=client_id, bank_id=bank_id, application_name=application_name,
         allow_transactionHistory=allow_transactionHistory, allow_balance=allow_balance,
         allow_details=allow_details, allow_checkFundsAvailability=allow_checkFundsAvailability,
@@ -1684,14 +1684,14 @@ def banksubscription_register(client_id, application_name,bank_id):
 def banksubscription_unregister(client_id,application_name,bank_id,subscription_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    reply = api.banksubscription_unregister(dbsession,client_id=client_id, bank_id=bank_id, application_name=application_name, subscription_id=subscription_id)
+    reply = api.banksubscription_unregister(g.dbsession,client_id=client_id, bank_id=bank_id, application_name=application_name, subscription_id=subscription_id)
     return jsonify(reply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/applications/<application_name>/banks/<bank_id>/bankaccounts/<account_id>/remove', methods = ['POST',''])
 def bankaccount_remove(client_id,application_name,bank_id,account_id):
     _process_call_area=g.caller_area
     dbsession = g.dbsession
-    reply = api.bankaccount_remove(dbsession,client_id=client_id, bank_id=bank_id, application_name=application_name, account_id=account_id)
+    reply = api.bankaccount_remove(g.dbsession,client_id=client_id, bank_id=bank_id, application_name=application_name, account_id=account_id)
     return jsonify(reply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/applications/<application_name>/banks/<bank_id>/subscriptions/<subscription_id>/authorize', methods=['PUT','POST', 'PATCH'])
@@ -1704,7 +1704,7 @@ def banksubscription_request_client_authorization(client_id,application_name,ban
         reply = {'api_status': 'error', 'api_message': msg}
         return make_response(jsonify(reply), 400)
         
-    reply = api.banksubscription_request_authorization_from_client(dbsession,client_id, bank_id, subscription_id, application_name)
+    reply = api.banksubscription_request_authorization_from_client(g.dbsession,client_id, bank_id, subscription_id, application_name)
     return jsonify(reply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/applications/<application_name>/banks/<bank_id>/subscriptions/create', methods = ['PATCH'])
@@ -1726,7 +1726,7 @@ def banksubscription_create(client_id,application_name,bank_id):
     payments_currency = subscription_options.get('payments_currency', 'EUR')
     payments_amount = subscription_options.get('payments_amount', 10)
     
-    reply = api.banksubscription_create(dbsession,
+    reply = api.banksubscription_create(g.dbsession,
         client_id=client_id, bank_id=bank_id, application_name=application_name,
         allow_transactionHistory=allow_transactionHistory, allow_balance=allow_balance,
         allow_details=allow_details, allow_checkFundsAvailability=allow_checkFundsAvailability,
@@ -1742,7 +1742,7 @@ def client_device_register(client_id,device_uid):
     update_record.update({'client_id':client_id})
     update_record.update({'device_uid':device_uid})
     update_record.update({'status':'Active'})
-    dbreply=db.dbapi_client_device(dbsession, 'Register', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client_device(g.dbsession, 'Register', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/devices/<device_uid>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1752,21 +1752,21 @@ def client_device_unregister(client_id,device_uid):
     update_record.update({'client_id':client_id})
     update_record.update({'device_uid':device_uid})
     update_record.update({'status':'Unregistered'})
-    dbreply=db.dbapi_client_device(dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_client_device(g.dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/interaction/start', methods = ['PUT','POST'])
 def start_client_interactions(client_id):
     _process_call_area=g.caller_area
     interaction_record={'client_id':client_id}
-    dbreply=db.dbapi_interaction(dbsession, 'start', interaction_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_interaction(g.dbsession, 'start', interaction_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/interactions/finish', methods = ['PUT','POST'])
 def finish_client_interactions(interaction_id,client_id):
     _process_call_area=g.caller_area
     interaction_record={'client_id':client_id}
-    dbreply=db.dbapi_interaction(dbsession, 'finish', interaction_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_interaction(g.dbsession, 'finish', interaction_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/clients/<client_id>/interactions/message', methods = ['PUT','POST'])
@@ -1777,7 +1777,7 @@ def add_client_interaction_message(client_id):
         return make_response(jsonify(reply), 400)
     message_record = request.json
     message_record.update({'client_id':client_id})
-    dbreply=db.dbapi_interaction(dbsession, 'message', message_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_interaction(g.dbsession, 'message', message_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 
@@ -1793,7 +1793,7 @@ def add_client_interaction_message(client_id):
 # #@auth.login_required
 # def get_serviceproviders_list():
 #     # filterString=f"all"
-#     dbreply = db.dbapi_service_provider(dbsession, 'LIST', {}, caller_area=_process_call_area)
+#     dbreply = db.dbapi_service_provider(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders', methods = ['PUT','POST'])
@@ -1809,13 +1809,13 @@ def add_client_interaction_message(client_id):
 #     if not record_data.get('email'):
 #         reply={'api_status':'error','api_message':'[email] Not provided'}
 #         return make_response(jsonify(reply), 401)
-#     dbreply=db.dbapi_service_provider(dbsession, 'register', record_data, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'register', record_data, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders/<service_provider_id>', methods = ['GET'])
 # #@auth.login_required
 # def get_serviceprovider(service_provider_id):
-#     dbreply=db.dbapi_service_provider(dbsession, 'get', {'service_provider_id':service_provider_id}, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'get', {'service_provider_id':service_provider_id}, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders/<service_provider_id>', methods = ['PUT','POST','PATCH'])
@@ -1826,7 +1826,7 @@ def add_client_interaction_message(client_id):
 #         return make_response(jsonify(reply), 400)
 #     update_record = request.json
 #     update_record.update({'service_provider_id':service_provider_id})
-#     dbreply=db.dbapi_service_provider(dbsession, 'update', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'update', update_record, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders/<service_provider_id>/confirm', methods = ['PUT','POST','PATCH'])
@@ -1834,7 +1834,7 @@ def add_client_interaction_message(client_id):
 # def confirm_serviceprovider(service_provider_id):
 #     update_record = request.json
 #     update_record.update({'service_provider_id':service_provider_id})
-#     dbreply=db.dbapi_service_provider(dbsession, 'confirm', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'confirm', update_record, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders/<service_provider_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1842,13 +1842,13 @@ def add_client_interaction_message(client_id):
 # def unregister_serviceprovider(service_provider_id):
 #     update_record = request.json
 #     update_record.update({'service_provider_id':service_provider_id})
-#     dbreply=db.dbapi_service_provider(dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
 #     return jsonify(dbreply)
 # #############################################################################
 # @app.route('/openbanking/api/v1/serviceproviders/<service_provider_id>', methods = ['DELETE'])
 # #@auth.login_required
 # def delete_serviceprovider(service_provider_id):
-#     dbreply=db.dbapi_service_provider(dbsession, 'delete', {'service_provider_id':service_provider_id}, caller_area=_process_call_area)
+#     dbreply=db.dbapi_service_provider(g.dbsession, 'delete', {'service_provider_id':service_provider_id}, caller_area=_process_call_area)
 #     return jsonify( dbreply )#############################################################################
 
 #############################################################################
@@ -1862,7 +1862,7 @@ def add_client_interaction_message(client_id):
 # #@auth.login_required
 # def get_merchants_list():
 #     # filterString=f"all"
-#     dbreply = db.dbapi_merchant(dbsession, 'LIST', {}, caller_area=_process_call_area)
+#     dbreply = db.dbapi_merchant(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchants', methods = ['PUT','POST'])
@@ -1878,13 +1878,13 @@ def new_merchant():
     if not record_data.get('email'):
         reply={'api_status':'error','api_message':'[email] Not provided'}
         return make_response(jsonify(reply), 401)
-    dbreply=db.dbapi_merchant(dbsession, 'register', record_data, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'register', record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>', methods = ['GET'])
 #@auth.login_required
 def get_merchant(merchant_id):
-    dbreply=db.dbapi_merchant(dbsession, 'get', {'merchant_id':merchant_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'get', {'merchant_id':merchant_id}, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>', methods = ['PUT','POST','PATCH'])
@@ -1895,7 +1895,7 @@ def update_merchant(merchant_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'merchant_id':merchant_id})
-    dbreply=db.dbapi_merchant(dbsession, 'update', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'update', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>/confirm', methods = ['PUT','POST','PATCH'])
@@ -1903,7 +1903,7 @@ def update_merchant(merchant_id):
 def confirm_merchant(merchant_id):
     update_record = request.json
     update_record.update({'merchant_id':merchant_id})
-    dbreply=db.dbapi_merchant(dbsession, 'confirm', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'confirm', update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -1911,13 +1911,13 @@ def confirm_merchant(merchant_id):
 def unregister_merchant(merchant_id):
     update_record = request.json
     update_record.update({'merchant_id':merchant_id})
-    dbreply=db.dbapi_merchant(dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>', methods = ['DELETE'])
 #@auth.login_required
 def delete_merchant(merchant_id):
-    dbreply=db.dbapi_merchant(dbsession, 'delete', {'merchant_id':merchant_id}, caller_area=_process_call_area)
+    dbreply=db.dbapi_merchant(g.dbsession, 'delete', {'merchant_id':merchant_id}, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/merchants/<merchant_id>/banksubscription', methods = ['PUT','POST','PATCH'])
@@ -1928,7 +1928,7 @@ def merchant_banksubscription_register(merchant_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'merchant_id':merchant_id})
-    dbreply = db.dbapi_merchant_bankaccount_register(dbsession,update_record, caller_area=_process_call_area)
+    dbreply = db.dbapi_merchant_bankaccount_register(g.dbsession,update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 #############################################################################
@@ -1944,7 +1944,7 @@ def new_pointofsale(merchant_id):
         reply={'api_status':'error','api_message':'[name] Not provided'}
         return make_response(jsonify(reply), 401)
     record_data.update({'merchant_id':merchant_id}) 
-    dbreply = db.dbapi_pointofsale_register(dbsession,record_data, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale_register(g.dbsession,record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/merchnants/<merchant_id>/employees', methods = ['PUT','POST'])
@@ -1958,7 +1958,7 @@ def new_employee(merchant_id):
         reply={'api_status':'error','api_message':'[name] Not provided'}
         return make_response(jsonify(reply), 401)
     record_data.update({'merchant_id':merchant_id}) 
-    dbreply = db.dbapi_employee_register(dbsession,record_data, caller_area=_process_call_area)
+    dbreply = db.dbapi_employee_register(g.dbsession,record_data, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 #############################################################################
@@ -1995,7 +1995,7 @@ def update_pointofsale(pointofsale_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'pointofsale_id':pointofsale_id})
-    dbreply = db.dbapi_pointofsale_update(dbsession,update_record, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale_update(g.dbsession,update_record, caller_area=_process_call_area)
     return jsonify( dbreply )
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -2006,7 +2006,7 @@ def unregister_pointofsale(pointofsale_id):
         return make_response(jsonify(reply), 400)
     update_record = request.json
     update_record.update({'pointofsale_id':pointofsale_id})
-    dbreply = db.dbapi_pointofsale_unregister(dbsession,update_record, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale_unregister(g.dbsession,update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 #############################################################################
@@ -2026,7 +2026,7 @@ def pointofsale_bankaccount_add(pointofsale_id,bank_account_id):
         reply={'api_status':'error','api_message':'bank_account_id Not provided'}
         return make_response(jsonify(reply), 400)
     update_record.update({'pointofsale_id':pointofsale_id})
-    dbreply = db.dbapi_pointofsale_bankaccount_add(dbsession,update_record, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale_bankaccount_add(g.dbsession,update_record, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/bankaccount/remove', methods = ['PUT','POST','DELETE'])
@@ -2035,7 +2035,7 @@ def pointofsale_bankaccount_remove(pointofsale_id):
         reply={'api_status':'error','api_message':'pointofsale_id Not provided'}
         return make_response(jsonify(reply), 400)
     pos={'pointofsale_id':pointofsale_id}
-    dbreply = db.dbapi_pointofsale_bankaccount_remove(dbsession,pos, caller_area=_process_call_area)
+    dbreply = db.dbapi_pointofsale_bankaccount_remove(g.dbsession,pos, caller_area=_process_call_area)
     return jsonify(dbreply)
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>', methods = ['DELETE'])
@@ -2046,19 +2046,19 @@ def delete_pointofsale(pointofsale_id):
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/creditinfo', methods = ['GET'])
 def get_pointofsale_creditinfo_from_posuid(pointofsale_id):
-    res = db.dbapi_pointofsale_credit_info(dbsession,pointofsale_id, caller_area=_process_call_area)
+    res = db.dbapi_pointofsale_credit_info(g.dbsession,pointofsale_id, caller_area=_process_call_area)
     return jsonify( res )
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/interactions/start', methods = ['PUT','POST'])
 def start_pointofsale_interactions(pointofsale_id):
     record={'pointofsale_id':pointofsale_id}
-    result = db.dbapi_interaction_start(dbsession,record, caller_area=_process_call_area)
+    result = db.dbapi_interaction_start(g.dbsession,record, caller_area=_process_call_area)
     return jsonify( result )
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/interactions/finish', methods = ['PUT','POST'])
 def finish_pointofsale_interactions(pointofsale_id):
     record={'pointofsale_id':pointofsale_id}
-    result = db.dbapi_interaction_finish(dbsession,record, caller_area=_process_call_area)
+    result = db.dbapi_interaction_finish(g.dbsession,record, caller_area=_process_call_area)
     return jsonify( result )
 #############################################################################
 @app.route('/openbanking/api/v1/pointofsales/<pointofsale_id>/interactions/messages', methods = ['PUT','POST'])
@@ -2130,7 +2130,7 @@ def delete_employee(employee_id):
 # #@auth.login_required
 # def get_consumers_list():
 #     # filterString=f"all"
-#     dbreply = db.dbapi_consumer(dbsession, 'LIST', {}, caller_area=_process_call_area)
+#     dbreply = db.dbapi_consumer(g.dbsession, 'LIST', {}, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers', methods = ['PUT','POST'])
@@ -2146,13 +2146,13 @@ def delete_employee(employee_id):
 #     if not record_data.get('email'):
 #         reply={'api_status':'error','api_message':'[email] Not provided'}
 #         return make_response(jsonify(reply), 401)
-#     dbreply=db.dbapi_consumer(dbsession, 'register', record_data, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'register', record_data, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>', methods = ['GET'])
 # #@auth.login_required
 # def get_consumer(consumer_id):
-#     dbreply=db.dbapi_consumer(dbsession, 'get', {'consumer_id':consumer_id}, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'get', {'consumer_id':consumer_id}, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>', methods = ['PUT','POST','PATCH'])
@@ -2163,7 +2163,7 @@ def delete_employee(employee_id):
 #         return make_response(jsonify(reply), 400)
 #     update_record = request.json
 #     update_record.update({'consumer_id':consumer_id})
-#     dbreply=db.dbapi_consumer(dbsession, 'update', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'update', update_record, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>/confirm', methods = ['PUT','POST','PATCH'])
@@ -2171,7 +2171,7 @@ def delete_employee(employee_id):
 # def confirm_consumer(consumer_id):
 #     update_record = request.json
 #     update_record.update({'consumer_id':consumer_id})
-#     dbreply=db.dbapi_consumer(dbsession, 'confirm', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'confirm', update_record, caller_area=_process_call_area)
 #     return jsonify( dbreply )
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>/unregister', methods = ['PUT','POST','PATCH'])
@@ -2179,13 +2179,13 @@ def delete_employee(employee_id):
 # def unregister_consumer(consumer_id):
 #     update_record = request.json
 #     update_record.update({'consumer_id':consumer_id})
-#     dbreply=db.dbapi_consumer(dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'UnRegister', update_record, caller_area=_process_call_area)
 #     return jsonify(dbreply)
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>', methods = ['DELETE'])
 # #@auth.login_required
 # def delete_consumer(consumer_id):
-#     dbreply=db.dbapi_consumer(dbsession, 'delete', {'consumer_id':consumer_id}, caller_area=_process_call_area)
+#     dbreply=db.dbapi_consumer(g.dbsession, 'delete', {'consumer_id':consumer_id}, caller_area=_process_call_area)
 #     return jsonify(dbreply)
 # #############################################################################
 # @app.route('/openbanking/api/v1/consumers/<consumer_id>/banksubscription', methods = ['PUT','POST','PATCH'])

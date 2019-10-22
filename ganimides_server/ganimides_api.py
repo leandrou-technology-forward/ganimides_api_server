@@ -14,7 +14,7 @@ from _serverApp import log_message
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-# #from ganimides_database import dbapi_api
+from ganimides_database import dbapi_api
 from ganimides_database import dbapi_api_register_unregister
 from ganimides_database import dbapi_application
 from ganimides_database import dbapi_application_USER

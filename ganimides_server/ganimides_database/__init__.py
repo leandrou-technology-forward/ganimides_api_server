@@ -78,6 +78,7 @@ from _database_ganimides_schema import BANK_ACCOUNTS_TABLE
 
 #dbapis
 import _database_ganimides_api as dbapi
+from _database_ganimides_api import dbapi_api
 from _database_ganimides_api import dbapi_api_register_unregister
 from _database_ganimides_api import dbapi_application
 from _database_ganimides_api import dbapi_application_USER

@@ -68,7 +68,7 @@ import ganimides_api as api
 # from ganimides_database import getid
 
 #dbapis
-# from ganimides_database import dbapi_api
+from ganimides_database import dbapi_api
 from ganimides_database import dbapi_api_register_unregister
 from ganimides_database import dbapi_application
 from ganimides_database import dbapi_application_USER
