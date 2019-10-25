@@ -175,6 +175,10 @@ geolocation_lat = '34.789012'
 applicationID='dummy'
 application_name=__package__
 application_title=__name__
+application_logo = 'ganimides_logo.gif'
+application_color = '#856404'
+application_copywrite = 'leandrou-technogy-forward-ltd, 2019'
+
 user_id = ''
 user_is_loggedin = False
 log_file_name = module_ProgramName+'.log'
@@ -183,6 +187,10 @@ log_errors_file_name = os.path.splitext(os.path.basename(log_file_name))[0]+'_er
 application_configuration.update({'applicationID': applicationID})
 application_configuration.update({'application_title': application_title})
 application_configuration.update({'application_name': application_name})
+application_configuration.update({'application_logo': application_logo})
+application_configuration.update({'application_color': application_color})
+application_configuration.update({'application_copywrite': application_copywrite})
+
 application_configuration.update({'client_configuration': client_configuration})
 application_configuration.update({'client_config_file': client_config_file})
 application_configuration.update({'client_id': client_id})
@@ -429,7 +437,7 @@ def pair_application_configuration(paired_appl_configuration,paired_appl_identit
         paired_module_name = paired_appl_identityDictionary.get('module_id', '?')
         
     application_Color = paired_appl_identityDictionary.get('module_color',Fore.MAGENTA)
-    application_configuration.update({'application_name':application_Color})
+    application_configuration.update({'application_Color':application_Color})
 
     if application_configuration.get('application_name'):
         application_name = application_configuration.get('application_name')
@@ -437,8 +445,8 @@ def pair_application_configuration(paired_appl_configuration,paired_appl_identit
         application_title = application_configuration.get('application_title')
     if application_configuration.get('application_id'):
         applicationID = application_configuration.get('application_id')
-    if application_configuration.get('ganimides_registered_application'):
-        application_name = application_configuration.get('ganimides_registered_application')
+    # if application_configuration.get('ganimides_registered_application'):
+    #     application_name = application_configuration.get('ganimides_registered_application')
 
     if application_name and paired_module_name: #and applicationID and application_title and
         application_configuration_paired = True

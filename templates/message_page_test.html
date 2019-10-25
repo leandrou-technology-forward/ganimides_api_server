@@ -1,3 +1,4 @@
+
 <!-- parameters:
     page_title =   
     page_icon =
@@ -15,7 +16,6 @@
     application_color =
     application_copywrite = 
 -->
-
 
 {% if not page_title %}
 {% set page_title = 'ganimides message' %}
@@ -47,27 +47,28 @@
     {% endif %}
 {% endif %}
 
+{% if message_code %}
+    {% set message_code=str(message_code) %}
+{% endif %}
+
 {% if message_type == 'success' %}
-    {% set message_color='text-success' %}
+    {% set message_color='text_success' %}
     {% set message_code='' %}
 {% elif message_type == 'error' %}
-    {% set message_color='text-danger' %}
+    {% set message_color='text_danger' %}
 {% elif message_type == 'warning' %}
-    {% set message_color='text-warning' %}
+    {% set message_color='text_warning' %}
 {% else %}
-    {% set message_color='text-primary' %}
+    {% set message_color='text_primary' %}
 {% endif %}
 
+{% if not error_code %}
 {% if message_type == 'error' %}
-    {% set message_icon=url_for('static', filename='error.png') %}
-{% elif message_type == 'success' %}
-    {% set message_icon=url_for('static', filename='success.png') %}
-{% elif message_type == 'warning' %}
-    {% set message_icon=url_for('static', filename='warning.png') %}
+{% set error_code=101 %}
 {% else %}
-    {% set message_icon=url_for('static', filename='sunny.png') %}
+{% set error_code=11 %}
 {% endif %}
-
+{% endif %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -88,7 +89,7 @@
         -->
 
         <!-- Bootstrap core CSS -->
-        <!-- <link href="../static/bootstrap.min.css" rel="stylesheet"> -->
+        <link href="../static/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
@@ -100,7 +101,8 @@
 
 
         <!-- Custom styles for this template -->
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='animations.css') }}" />
+        <!-- <link href="../static/signin.css" rel="stylesheet"> -->
+        <link rel="stylesheet" type="text/css" href="../static/animations.css" />
 
         <!-- custom css -->
         <style>
@@ -142,10 +144,18 @@
                 <div class="row justify-content-center">
                     <div class="col-md-12 text-center">
 
-                        <img class="animated heartBeat delay-2s" src="{{message_icon}}" width="80" alt="{{message_type}}" />
+                        {% if message_type == 'error' %}
+                        <img class="animated heartBeat delay-2s" src="../static/error.png" width="100" />
+                        {% elif message_type == 'success' %}
+                        <img class="animated heartBeat delay-2s" src="../static/success.png" width="100" />
+                        {% elif message_type == 'warning' %}
+                        <img class="animated heartBeat delay-2s" src="../static/warning.png" width="100" />
+                        {% else %}
+                        <img class="animated heartBeat delay-2s" src="../static/sunny.png" width="100" />
+                        {% endif %}
 
                         {% if message_code %}
-                        <span class="display-3 d-block {{message_color}} font-weight-bold animated slideInRight">{{message_code}}</span>
+                        <span class="display-1 d-block {{message_color}} font-weight-bold animated slideInRight">{{message_code}}</span>
                         {% endif %}
 
                         {% if message %}
@@ -159,7 +169,7 @@
                         {% endif %}
 
                         <img class="animated zoomIn" src="{{application_logo}}" alt="{{application_name}}" width="60vw" height="60vw">
-                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:2vw; color:{{application_color}}">{{application_name}}</h1>
+                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:1.5vw; color:{{application_color}}">{{application_name}}</h1>
 
                         {% if next_page_link %}
                         <a href="{{next_page_link}}" class="btn btn-link">{{next_page_text}}</a>

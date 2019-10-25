@@ -1,53 +1,3 @@
-
-<!-- parameters:
-
-    title =   
-    icon =
-    error_code =
-    error_text =
-    error_message =
-    application_logo =
-    application_name =
-    application_color =
-    application_page_link =
-    copywrite = 
--->
-
-{% if not logo %}
-{% set logo = 'ganimides_logo.gif' %}
-{% endif %}
-{% if not application_name %}
-{% set application_name = 'leandrou-technology-forward-ltd' %}
-{% endif %}
-{% if not application_color %}
-{% set application_color = 'blue' %}
-{% endif %}
-
-{% if not copywrite %}
-{% set copywrite = 'leandrou-technology-forward-ltd, 2019' %}
-{% endif %}
-{% if not title %}
-{% set title = 'code verification' %}
-{% endif %}
-
-{% if result == 'success' %}
-{% set msg_color='green' %}
-{% set error_code=0 %}
-{% elif result == 'error' %}
-{% set msg_color='red' %}
-{% else %}
-{% set msg_color='orange' %}
-{% endif %}
-
-{% if not error_code %}
-{% if result == 'error' %}
-{% set error_code=101 %}
-{% else %}
-{% set error_code=11 %}
-{% endif %}
-{% endif %}
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -56,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>{{title}}</title>
+        <title>mobile verification</title>
         <!-- icon -->
-        <link rel="icon" href="{{ url_for('static', filename=icon)}}">
+        <link rel="icon" href="../static/skantzochoiros.jpeg">
 
         <!-- Bootstrap core CSS
         <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -126,21 +76,19 @@
                         <!-- <img class="animated bounce" src="../static/OK.png" width="100" /> -->
                         <!-- <img class="animated bounce" src="../static/sunny.png" width="100" /> -->
 
-                        {% if error_code > 0 %}
                         <span class="display-1 d-block text-danger font-weight-bold animated slideInRight">404</span>
-                        {% endif %}
-
                         <div class="mb-4 lead">
-                            <h1 class="text-shadow animated slideInLeft">{{message}}</h1>
+                            <h1 class="text-shadow animated slideInLeft">Page not found</h1>
                         </div>
-                        <div class="mb-4 lead text-shadow animated rollIn delay-1s">{{secondary_message}}</div>
+                        <div class="mb-4 lead text-shadow animated rollIn delay-1s">The requested resource could not be found but may be available again in the future.</div>
 
-                        <img class="animated zoomIn" src="{{url_for('static', filename=application_logo)}}" alt="{{application_name}}" width="60vw" height="60vw">
-                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:1.5vw;color:{{application_color}}">{{application_name}}</h1>
 
-                        <a href="{{application_page_link}}" class="btn btn-link">Back to Home</a>
+                        <img class="animated zoomIn" src="../static/skantzochoiros.png" alt="leandrou-technology-forward-ltd" width="60vw" height="60vw">
+                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:1.5vw;color: black">leandrou-technology-forward-ltd</h1>
 
-                        <p class="p-2 text-muted small animated bounce delay-2s">© {{copywrite}}</p>
+                        <a href="https://ifestionas.pythonanywhere.com" class="btn btn-link">Back to Home</a>
+
+                        <p class="p-2 text-muted small animated bounce delay-2s">© leandrou-technology-forward 2019</p>
 
                     </div>
                 </div>

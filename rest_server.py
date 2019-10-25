@@ -28,12 +28,12 @@ from _serverApp import Fore
 
 # from _tokenServices import token_is_valid
 # from colorama import Fore
-#
 
 from ganimides_server import  ganimides_database as db
 from ganimides_server import  ganimides_api as api
 ##########################################################################################################################
-x=1
+# x=1
+
 # ##########################################################################################################################
 # Securing Python APIs with Auth0
 # Securing Python APIs with Auth0 is very easy and brings a lot of great features to the table. With Auth0, we only have to write a few lines of code to get:
@@ -194,70 +194,143 @@ def is_human(parCaptchaResponse):
     # log_function_finish('is_human')
     return response_text['success']
 ##########################################################################################################################
-def message_page(message_type='', message='', secondary_message='', message_description='', title='', application_name='', application_color='', application_copywrite='', application_logo='', error_code=0):
+def render_message_page(message_type='', message='', message_text='', message_code='', page_title='', page_icon='', next_page_link='', next_page_text='', application_name='', application_color='', application_copywrite='', application_logo='', application_icon='',**kwargs):
     if application_name:
         res = db.dbapi_application(g.dbsession, 'get', {'application_name':application_name}, caller_area=g.caller_area)
         application_rec = res.get('api_data', {})
         application_logo = application_rec.get('application_logo')
         application_color = application_rec.get('application_color')
         application_copywrite = application_rec.get('application_copywrite')
+        application_icon = application_rec.get('application_icon')
+        if not application_icon:
+            application_icon=application_logo
+
+    if not application_name:
+        application_name = thisApp.application_configuration.get('application_name')
+    if not application_name:
+        application_name = 'ganimides business technology labs'
+
+    if not application_logo:
+        application_logo = thisApp.application_configuration.get('application_logo')
     if not application_logo:
         application_logo = 'ganimides_logo.gif'
+
+    if not application_color:
+        application_color = thisApp.application_configuration.get('application_color')
     if not application_color:
         application_color = 'blue'
+
+    if not application_copywrite:
+        application_copywrite = thisApp.application_configuration.get('application_copywrite')
     if not application_copywrite:
         application_copywrite = 'leandrou-technology-forward-ltd, 2019'
 
-    if not title:
-        title = 'ganimides'
+    if not page_title:
+        page_title = thisApp.application_configuration.get('application_title')
+    if not page_title:
+        page_title = 'ganimides'
+
+    if not page_icon:
+        page_icon=application_icon
+    if not page_icon:
+        page_icon = thisApp.application_configuration.get('application_logo')
+    if not page_icon:
+        page_icon = 'ganimides_logo.gif'
+
+    if page_icon:
+        page_icon=url_for('static', filename=page_icon)
+    if application_logo:
+        application_logo=url_for('static', filename=application_logo)
+    if application_icon:
+        application_icon=url_for('static', filename=application_icon)
 
     message_page = render_template(
         'message_page.html',
         message_type=message_type,
         message=message,
-        secondary_message=secondary_message,
-        message_description=message_description,
-        error_code=error_code,
-        title=title,
+        message_text=message_text,
+        message_code=message_code,
+        page_title=page_title,
+        page_icon=page_icon,
+        next_page_link=next_page_link,
+        next_page_text=next_page_text,
         application_name=application_name,
         application_color=application_color,
-        logo=application_logo,
-        copywrite=application_copywrite,
+        application_copywrite=application_copywrite,
+        application_logo=application_logo,
+        application_icon=application_icon,
+        **kwargs,
     )
     return message_page    
 ##########################################################################################################################
-def application_page(page_template, message_type='', message='', secondary_message='', message_description='', title='', application_name='', application_color='', application_copywrite='', application_logo='', error_code=0, disable_input=False,errors=[],error=''):
+def render_application_page(page_template, message='', message_text='', page_title='', page_icon='', next_page_link='', next_page_text='', application_name='', application_color='', application_copywrite='', application_logo='', application_icon='', input_disabled=False, error_type='', error='', errors=[], **kwargs):
     if application_name:
         res = db.dbapi_application(g.dbsession, 'get', {'application_name':application_name}, caller_area=g.caller_area)
         application_rec = res.get('api_data', {})
         application_logo = application_rec.get('application_logo')
         application_color = application_rec.get('application_color')
         application_copywrite = application_rec.get('application_copywrite')
+        application_icon = application_rec.get('application_icon')
+        if not application_icon:
+            application_icon=application_logo
+
+    if not application_name:
+        application_name = thisApp.application_configuration.get('application_name')
+    if not application_name:
+        application_name = 'ganimides business technology labs'
+
+    if not application_logo:
+        application_logo = thisApp.application_configuration.get('application_logo')
     if not application_logo:
         application_logo = 'ganimides_logo.gif'
+
+    if not application_color:
+        application_color = thisApp.application_configuration.get('application_color')
     if not application_color:
         application_color = 'blue'
+
+    if not application_copywrite:
+        application_copywrite = thisApp.application_configuration.get('application_copywrite')
     if not application_copywrite:
         application_copywrite = 'leandrou-technology-forward-ltd, 2019'
 
-    if not title:
-        title = 'ganimides'
+    if not page_title:
+        page_title = thisApp.application_configuration.get('application_title')
+    if not page_title:
+        page_title = 'ganimides'
+
+    if not page_icon:
+        page_icon=application_icon
+    if not page_icon:
+        page_icon = thisApp.application_configuration.get('application_logo')
+    if not page_icon:
+        page_icon = 'ganimides_logo.gif'
+
+    if page_icon:
+        page_icon=url_for('static', filename=page_icon)
+    if application_logo:
+        application_logo=url_for('static', filename=application_logo)
+    if application_icon:
+        application_icon=url_for('static', filename=application_icon)
 
     app_page = render_template(
         page_template,
-        message_type=message_type,
         message=message,
-        secondary_message=secondary_message,
-        message_description=message_description,
-        error=error,
-        errors=errors,
-        error_code=error_code,
-        title=title,
+        message_text=message_text,
+        page_title=page_title,
+        page_icon=page_icon,
+        next_page_link=next_page_link,
+        next_page_text=next_page_text,
         application_name=application_name,
         application_color=application_color,
-        logo=application_logo,
-        copywrite=application_copywrite,
-        disable_input=disable_input,
+        application_copywrite=application_copywrite,
+        application_logo=application_logo,
+        application_icon=application_icon,
+        error_type=error_type,
+        error=error,
+        errors=errors,
+        input_disabled=input_disabled,
+        **kwargs,
     )
     return app_page    
 ##########################################################################################################################
@@ -609,8 +682,8 @@ def after_request_func(response):
 #############################################################
 @app.route('/test', methods = ['GET','PUT','POST','PATCH'])
 def open_test_page():
-    msg_page = message_page(message_type='warning', message='adadadasdsad asdadasdasd', secondary_message='', message_description='', title='zzzzzzzzz', application_name='ganimides', application_color='', application_copywrite='', application_logo='', error_code=111)
-    return msg_page
+    message_page = render_message_page(message_type='error', message='message...', message_text='message_text,message_text,message_text,', message_code='404', page_title='test', page_icon='', next_page_link='', next_page_text='', application_name='qrpay_client', application_color='', application_copywrite='', application_logo='', application_icon='')
+    return message_page
 #############################################################################
 # @app.route('/webhook', methods=['POST'])
 # def webhook():
@@ -678,17 +751,19 @@ def email_confirm(token):
     page_template = 'email_verification_page.html'
     page_title = 'email verification'
     page_message = 'Please enter the 6-digit verification code we sent via EMAIL'
-    page_secondary_message = "(we want to make sure it's you before we commit your subscription)"
+    page_message_text = "(we want to make sure it's you before we commit your subscription)"
+
+    msg_type = ""
+    msg = ""
+    msg_text = ""
+    msg_code = ""
 
     application_name = ""
-    msg = ""
-    msg2=""
-    msg_desc = ""
-    error_code = 0
-    msg_type = ""
+
+    error_type=""
     error = ""
     errors = []
-    disable_input = False
+    input_disabled = False
 
     #validate token
     verification_filter = {'verification_token': token,'verification_entity':'email'}
@@ -700,11 +775,10 @@ def email_confirm(token):
             msg = 'invalid access'
             error_code = 599
             msg_type="error"
-            msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-            return msg_page
-    
-    verification_rec = res.get('api_data', {})
+            message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+            return message_page
 
+    verification_rec = res.get('api_data', {})
     verification_id = verification_rec.get('verification_id')
     client_id = verification_rec.get('client_id')
     application_name = verification_rec.get('application_name', '')
@@ -713,43 +787,44 @@ def email_confirm(token):
         msg = 'system error encountered. retry'
         error_code = 501
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     if verification_rec.get('status') == 'Confirmed':
         msg = 'email already confirmed'
         error_code = 101
         msg_type="warning"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     client = dbsession.get(db.CLIENT, {'client_id':client_id}, caller_area=_process_call_area)
     if not client:
         msg = 'system error encountered. retry'
         error_code = 511
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
     if not client.email:
         msg = 'system error encountered. retry'
         error_code = 512
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
     if client.email_confirmed:
         msg = 'email already confirmed'
         error_code = 101
         msg_type="warning"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     if request.method == 'GET':
         if not verification_rec.get('expiry_timestamp') or verification_rec.get('expiry_timestamp') < datetime.datetime.utcnow():
+            error_type = 'fatal'
             error = 'this verification code is expired. request a new verification code'
-            disable_input = True
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            input_disabled = True
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page
-        this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+        this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
         return this_page        
     elif request.method == 'POST':
         try:
@@ -763,8 +838,8 @@ def email_confirm(token):
                 msg = 'email already confirmed'
                 error_code = 102
                 msg_type="warning"
-                msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-                return msg_page
+                message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+                return message_page
 
             confirmation_url = url_for('email_confirm', token='-token-', _external=True)
             try:
@@ -773,21 +848,21 @@ def email_confirm(token):
                 msg = 'system error. fail to send email'
                 error_code = 502
                 msg_type="error"
-                msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-                return msg_page
+                message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+                return message_page
 
             if email_reply.get('api_status')=='success':
                 msg = "email sent with a new verification code"
-                msg_desc = f'open this email, click on the link to go the verificaion page and enter the verification code'
+                msg_text = f'open this email, click on the link to go the verificaion page and enter the verification code'
                 msg_type="success"
             else:
                 error_text = email_reply.get('api_message')
                 msg = f'system error. fail to send email'
-                msg_desc = f'{error_text}'
+                msg_text = f'{error_text}'
                 msg_type = 'error'
                 error_code=503
-            msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-            return msg_page
+            message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+            return message_page
 
         #get the input from the form as digits
         try:
@@ -796,33 +871,36 @@ def email_confirm(token):
             input_code = ""
             
         if not input_code:
+            error_type = ''
             error = 'please enter your verification code'
             error_code=80
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         if not input_code == verification_rec.get('verification_code'):
+            error_type = ''
             error = 'invalid verification code. retry'
             error_code=81
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         #ok, verify button pressed
         conf_record = {'verification_code': input_code, 'verification_token': token, 'verification_id': verification_id}
         confirm_result = db.dbapi_email_confirmation(g.dbsession, conf_record, caller_area=_process_call_area)
         if not confirm_result.get('api_status')=='success':
+            error_type = ''
             error = f"your verification failed. Retry"
             error_code=82
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         msg = f"you have just confirmed your email. Thanks!"
-        msg_desc = f"you can now proceed with your registration"
+        msg_text = f"you can now proceed with your registration"
         msg_type = 'success'
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
-    this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+    this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
     return this_page        
 #############################################################################
 @app.route('/confirmation/<token>/mobile', methods = ['GET','PUT','POST','PATCH'])
@@ -833,19 +911,22 @@ def mobile_confirm(token):
     page_template = 'mobile_verification_page.html'
     page_title = 'mobile verification'
     page_message = 'Please enter the 6-digit verification code we sent via SMS'
-    page_secondary_message = "(we want to make sure it's you before we commit your subscription)"
+    page_message_text = "(we want to make sure it's you before we commit your subscription)"
+
+    msg_type = ""
+    msg = ""
+    msg_text = ""
+    msg_code = ""
 
     application_name = ""
-    msg = ""
-    msg2=""
-    msg_desc = ""
-    error_code = 0
-    msg_type = ""
+
+    error_type=""
     error = ""
     errors = []
-    disable_input = False
+    input_disabled = False
 
-    # this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+    # #for test/debug
+    # this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
     # return this_page        
 
     #validate token
@@ -858,8 +939,8 @@ def mobile_confirm(token):
             msg = 'invalid access'
             error_code = 599
             msg_type="error"
-            msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-            return msg_page
+            message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+            return message_page
     
     verification_rec = res.get('api_data', {})
 
@@ -871,43 +952,44 @@ def mobile_confirm(token):
         msg = 'system error encountered. retry'
         error_code = 501
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     if verification_rec.get('status') == 'Confirmed':
         msg = 'mobile already confirmed'
         error_code = 101
         msg_type="warning"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     client = dbsession.get(db.CLIENT, {'client_id':client_id}, caller_area=_process_call_area)
     if not client:
         msg = 'system error encountered. retry'
         error_code = 511
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
     if not client.mobile:
         msg = 'system error encountered. retry'
         error_code = 512
         msg_type="error"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
     if client.mobile_confirmed:
         msg = 'mobile already confirmed'
         error_code = 101
         msg_type="warning"
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
     if request.method == 'GET':
         if not verification_rec.get('expiry_timestamp') or verification_rec.get('expiry_timestamp') < datetime.datetime.utcnow():
+            error_type = 'fatal'
             error = 'this verification code is expired. request a new verification code'
-            disable_input = True
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            input_disabled = True
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page
-        this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+        this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
         return this_page        
     elif request.method == 'POST':
         try:
@@ -921,8 +1003,8 @@ def mobile_confirm(token):
                 msg = 'mobile already confirmed'
                 error_code = 103
                 msg_type="warning"
-                msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-                return msg_page
+                message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+                return message_page
 
             confirmation_url = url_for('mobile_confirm', token='-token-', _external=True)
             try:
@@ -931,21 +1013,21 @@ def mobile_confirm(token):
                 msg = 'system error. fail to send sms'
                 error_code = 504
                 msg_type="error"
-                msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-                return msg_page
+                message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+                return message_page
 
             if sms_reply.get('api_status')=='success':
                 msg = "sms sent with a new verification code"
-                msg_desc = f'open this sms, click on the link to go the verificaion page and enter the verification code'
+                msg_text = f'open this sms, click on the link to go the verificaion page and enter the verification code'
                 msg_type="success"
             else:
                 error_text = sms_reply.get('api_message')
                 msg = f'system error. fail to send sms'
-                msg_desc = f'{error_text}'
+                msg_text = f'{error_text}'
                 msg_type = 'error'
                 error_code=505
-            msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-            return msg_page
+            message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+            return message_page
 
         #get the input from the form as digits
         try:
@@ -954,33 +1036,36 @@ def mobile_confirm(token):
             input_code = ""
             
         if not input_code:
+            error_type = ''
             error = 'please enter your verification code'
             error_code=80
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         if not input_code == verification_rec.get('verification_code'):
+            error_type = ''
             error = 'invalid verification code. retry'
             error_code=81
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         #ok, verify button pressed
         conf_record = {'verification_code': input_code, 'verification_token': token, 'verification_id': verification_id}
         confirm_result = db.dbapi_mobile_confirmation(g.dbsession, conf_record, caller_area=_process_call_area)
         if not confirm_result.get('api_status')=='success':
+            error_type = ''
             error = f"your verification failed. Retry"
             error_code=82
-            this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+            this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
             return this_page        
 
         msg = f"you have just confirmed your mobile. Thanks!"
-        msg_desc = f"you can now proceed with your registration"
+        msg_text = f"you can now proceed with your registration"
         msg_type = 'success'
-        msg_page = message_page(message_type=msg_type, message=msg, secondary_message=msg2, message_description=msg_desc, title=page_title, application_name=application_name, error_code=error_code)
-        return msg_page
+        message_page = render_message_page(message_type=msg_type, message=msg, message_text=msg_text, message_code=msg_code, page_title=page_title, application_name=application_name)
+        return message_page
 
-    this_page = application_page(page_template, error=error, error_code=error_code, errors=errors, disable_input=disable_input, title=page_title, application_name=application_name, message=page_message, secondary_message=page_secondary_message)
+    this_page = render_application_page(page_template, message=page_message, message_text=page_message_text, page_title=page_title, application_name=application_name, error_type=error_type, error=error, errors=errors, input_disabled=input_disabled)
     return this_page        
 #############################################################################
 @app.route('/authorization', methods = ['GET','PUT','POST','PATCH'])
@@ -1002,16 +1087,16 @@ def get_authorization_code_from_boc_client():
     if not result.get('api_status')=='success':
         msg = result.get('api_message', '?')
         msg = f"your authorization for an app to use your {bank_code} account(s) FAILED. retry"
-        msg_desc=""
+        msg_text=""
         # resp = make_response(jsonify(msg), 200)
         # resp.headers['Content-type'] = 'text/html'
         # return resp
-        msg_page = message_page(message_type='error', message=msg, secondary_message='', message_description=msg_desc, title='bank authorization', application_name=application_name,error_code=91)
-        return msg_page
+        message_page = render_message_page(message_type='error', message=msg, secondary_message='', message_description=msg_text, title='bank authorization', application_name=application_name,error_code=91)
+        return message_page
     else:
         application_name=result.get('application_name','?')
         msg = f"you have just authorized app {application_name} to use your {bank_code} account(s)."
-        msg_desc=f"app {application_name} will never use your account(s) without your permission."
+        msg_text=f"app {application_name} will never use your account(s) without your permission."
         # resp = make_response(jsonify(msg), 200)
         # resp.headers['Content-type'] = 'text/html'
         app=db.dbapi_application(g.dbsession, 'get', {'application_name':application_name}, caller_area=_process_call_area)
@@ -1021,8 +1106,8 @@ def get_authorization_code_from_boc_client():
                 if app_redirect.find("http://") != 0 and app_redirect.find("https://") != 0:
                     app_redirect = "http://" + app_redirect.strip()
                     return redirect(app_redirect)
-        msg_page = message_page(message_type='success', message=msg, secondary_message='', message_description=msg_desc, title='bank authorization', application_name=application_name)
-        return msg_page
+        message_page = render_message_page(message_type='success', message=msg, secondary_message='', message_description=msg_text, title='bank authorization', application_name=application_name)
+        return message_page
 #############################################################################
 #############################################################################
 #############################################################################
