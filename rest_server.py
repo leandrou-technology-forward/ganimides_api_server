@@ -1353,7 +1353,7 @@ def delete_api(api_id):
 
 #BANKS
 
-@app.route('/openbanking/api/v1/banks', methods = ['PUT','POST'])
+@app.route('/openbanking/v1/banks', methods = ['PUT','POST'])
 #@auth.login_required
 #@auth.admin_required
 def new_bank():
