@@ -1,12 +1,25 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.gitignore
+
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+.Python
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+
 # Byte-compiled / optimized / DLL files
-
-#config
-*.cfg
-
-#vscode
-.vscode/
-
-
 __pycache__/
 *.py[cod]
 *$py.class
@@ -131,3 +144,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+*.cfg
