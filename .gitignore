@@ -1,12 +1,18 @@
+# my config files
+*.cfg
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
-.gitignore
+
 
 # Virtualenv
+venv*/
+dev-env/
+
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 .Python
 [Bb]in
@@ -145,4 +151,3 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-*.cfg
