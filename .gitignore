@@ -1,6 +1,8 @@
 # my config files
 *.cfg
 
+.vscode/
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
