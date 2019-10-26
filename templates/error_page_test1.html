@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>mobile verification</title>
+        <!-- icon -->
+        <link rel="icon" href="../static/skantzochoiros.jpeg">
+
+        <!-- Bootstrap core CSS
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+        -->
+
+        <!-- Bootstrap core CSS -->
+        <link href="../static/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+        <!-- load java script from google (or others)-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!-- load recaptcha from google if required-->
+        <!-- <script src='https://www.google.com/recaptcha/api.js'></script> -->
+
+
+        <!-- Custom styles for this template -->
+        <!-- <link href="../static/signin.css" rel="stylesheet"> -->
+        <link rel="stylesheet" type="text/css" href="../static/animations.css" />
+
+        <!-- custom css -->
+        <style>
+            body {
+                background: #dedede;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8yOS8xMiKqq3kAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVRIib2Vyw6EIAxFW5idr///Qx9sfG3pLEyJ3tAwi5EmBqRo7vHawiEEERHS6x7MTMxMVv6+z3tPMUYSkfTM/R0fEaG2bbMv+Gc4nZzn+dN4HAcREa3r+hi3bcuu68jLskhVIlW073tWaYlQ9+F9IpqmSfq+fwskhdO/AwmUTJXrOuaRQNeRkOd5lq7rXmS5InmERKoER/QMvUAPlZDHcZRhGN4CSeGY+aHMqgcks5RrHv/eeh455x5KrMq2yHQdibDO6ncG/KZWL7M8xDyS1/MIO0NJqdULLS81X6/X6aR0nqBSJcPeZnlZrzN477NKURn2Nus8sjzmEII0TfMiyxUuxphVWjpJkbx0btUnshRihVv70Bv8ItXq6Asoi/ZiCbU6YgAAAABJRU5ErkJggg==);
+            }
+
+            .page-wrap {
+                min-height: 100vh;
+            }
+
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+            }
+
+            .digit {
+                margin: 0 1px;
+                text-align: center;
+                line-height: 60px;
+                font-size: 40px;
+                border: solid 1px #ccc;
+                box-shadow: 0 0 5px #ccc inset;
+                outline: none;
+                width: 2.5rem;
+                /*10%;*/
+                transition: all .2s ease-in-out;
+                border-radius: 3px;
+                color: red;
+            }
+        </style>
+
+    </head>
+
+    <body class="text-center bg-white">
+
+        <div class="page-wrap d-flex flex-row align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 text-center">
+
+                        <img class="animated heartBeat" src="../static/attention.png" width="100" />
+                        <!-- <img class="animated bounce" src="../static/OK.png" width="100" /> -->
+                        <!-- <img class="animated bounce" src="../static/sunny.png" width="100" /> -->
+
+                        <span class="display-1 d-block text-danger font-weight-bold animated slideInRight">404</span>
+                        <div class="mb-4 lead">
+                            <h1 class="text-shadow animated slideInLeft">Page not found</h1>
+                        </div>
+                        <div class="mb-4 lead text-shadow animated rollIn delay-1s">The requested resource could not be found but may be available again in the future.</div>
+
+
+                        <img class="animated zoomIn" src="../static/skantzochoiros.png" alt="leandrou-technology-forward-ltd" width="60vw" height="60vw">
+                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:1.5vw;color: black">leandrou-technology-forward-ltd</h1>
+
+                        <a href="https://ifestionas.pythonanywhere.com" class="btn btn-link">Back to Home</a>
+
+                        <p class="p-2 text-muted small animated bounce delay-2s">© leandrou-technology-forward 2019</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+</html>

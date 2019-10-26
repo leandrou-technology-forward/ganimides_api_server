@@ -1,0 +1,228 @@
+
+<!-- parameters:
+    page_title =   
+    page_icon =
+    
+    next_page_text =
+    next_page_link =
+
+    message =
+    message_text = 
+    message_code =
+    message_type =
+
+    application_logo =
+    application_name =
+    application_color =
+    application_copywrite = 
+-->
+
+
+{% if not page_title %}
+{% set page_title = 'ganimides message' %}
+{% endif %}
+
+{% if not page_icon %}
+{% set page_icon = 'ganimides_logo.gif' %}
+{% endif %}
+
+{% if not application_name %}
+{% set application_name = 'leandrou-technology-forward-ltd' %}
+{% endif %}
+
+{% if not application_color %}
+{% set application_color = 'blue' %}
+{% endif %}
+
+{% if not application_copywrite %}
+{% set application_copywrite = 'leandrou-technology-forward-ltd, 2019' %}
+{% endif %}
+
+{% if not application_logo %}
+{% set application_logo = 'ganimides_logo.gif' %}
+{% endif %}
+
+{% if next_page_link %}
+    {% if not next_page_text %}
+    {% set next_page_text = 'continue' %}
+    {% endif %}
+{% endif %}
+
+
+{% if not message %}
+    {% set message = 'Please enter the 6-digit verification code we sent via SMS' %}
+{% endif %}
+{% if not message_text %}
+    {% set message_text = "(we want to make sure it's you before we commit your subscription)" %}
+{% endif %}
+
+{% set disabled='' %}
+{% set submit_button_style='btn-primary' %}
+ {% if input_disabled %}
+    {% set disabled='disabled' %}
+    {% set submit_button_style='btn-secondary' %}
+{% endif %}
+
+{% if error_type == 'warning' %}
+    {% set error_color='text-warning' %}
+{% elif error_type == 'error' %}
+    {% set error_color='text-danger' %}
+{% elif error_type == 'info' %}
+    {% set error_color='text-primary' %}
+{% else %}
+    {% set error_color='text-danger' %}
+{% endif %}
+
+{% if error_type == 'error' %}
+    {% set error_icon=url_for('static', filename='error.png') %}
+{% elif error_type == 'success' %}
+    {% set error_icon=url_for('static', filename='success.png') %}
+{% elif error_type == 'warning' %}
+    {% set error_icon=url_for('static', filename='warning.png') %}
+{% elif error_type == 'info' %}
+    {% set error_icon=url_for('static', filename='sunny.png') %}
+{% else %}
+    {% set error_icon=url_for('static', filename='error.png') %}
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>{{page_title}}</title>
+        <!-- icon -->
+        <link rel="icon" href="{{page_icon}}">
+
+        <!-- Bootstrap core CSS
+        <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> 
+        -->
+
+        <!-- Bootstrap core CSS -->
+        <!-- <link href="../static/bootstrap.min.css" rel="stylesheet"> -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+        <!-- load java script from google (or others)-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+        <!-- load recaptcha from google if required-->
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+
+
+        <!-- Custom styles for this template -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='animations.css') }}" />
+
+        <!-- custom css -->
+        <style>
+            body {
+                background: #dedede;
+                background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8yOS8xMiKqq3kAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVRIib2Vyw6EIAxFW5idr///Qx9sfG3pLEyJ3tAwi5EmBqRo7vHawiEEERHS6x7MTMxMVv6+z3tPMUYSkfTM/R0fEaG2bbMv+Gc4nZzn+dN4HAcREa3r+hi3bcuu68jLskhVIlW073tWaYlQ9+F9IpqmSfq+fwskhdO/AwmUTJXrOuaRQNeRkOd5lq7rXmS5InmERKoER/QMvUAPlZDHcZRhGN4CSeGY+aHMqgcks5RrHv/eeh455x5KrMq2yHQdibDO6ncG/KZWL7M8xDyS1/MIO0NJqdULLS81X6/X6aR0nqBSJcPeZnlZrzN477NKURn2Nus8sjzmEII0TfMiyxUuxphVWjpJkbx0btUnshRihVv70Bv8ItXq6Asoi/ZiCbU6YgAAAABJRU5ErkJggg==);
+            }
+
+            .page-wrap {
+                min-height: 100vh;
+            }
+
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+            }
+
+            .digit {
+                margin: 0 1px;
+                text-align: center;
+                line-height: 60px;
+                font-size: 40px;
+                border: solid 1px #ccc;
+                box-shadow: 0 0 5px #ccc inset;
+                outline: none;
+                width: 2.5rem;
+                /*10%;*/
+                transition: all .2s ease-in-out;
+                border-radius: 3px;
+                color: red;
+            }
+        </style>
+
+    </head>
+
+    <body class="text-center bg-white">
+
+        <div class="page-wrap d-flex flex-row align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 text-center">
+
+                        <img class="animated zoomIn" src="{{application_logo}}" alt="{{application_name}}" width="60vw" height="60vw">
+                        <h1 class="font-weight-bold text-shadow animated zoomIn" style="font-size:2vw; color:{{application_color}}">{{application_name}}</h1>
+
+
+                        <!-- <img class="animated heartBeat delay-2s" src="{{message_icon}}" width="80" alt="{{message_type}}" /> -->
+
+                        {% if message %}
+                        <div class="mb-0 lead">
+                            <h2 class="text-shadow animated slideInLeft">{{message}}</h2>
+                        </div>
+                        {% endif %}
+
+                        {% if message_text %}
+                        <div class="mb-0 lead text-shadow animated rollIn delay-1s">{{message_text}}</div>
+                        {% endif %}
+
+                        <form class="form-verify mt-4" method="post" >
+                            <div class="mt-2 mb-2 p-1 text-center">
+                                <!-- input fields must have a name to be submitted -->
+                                <input autofocus {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit1" name="digit1" onKeyup="autotab(this,'digit2')" />
+                                <input {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit2" name="digit2" onKeyup="autotab(this,'digit3')" />
+                                <input {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit3" name="digit3" onKeyup="autotab(this,'digit4')" />
+                                <input {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit4" name="digit4" onKeyup="autotab(this,'digit5')" />
+                                <input {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit5" name="digit5" onKeyup="autotab(this,'digit6')" />
+                                <input {{disabled}} class="digit" type="text" maxLength="1" size="1" min="0" max="9" pattern="[0-9]{1}" id="digit6" name="digit6" />
+                            </div>
+                            {% if error %}
+                            <h5 class="{{error_color}}" style="font-size:3vw;">{{error}}</h5>
+                            {% endif %}
+
+                            <div class="form-group d-flex justify-content-center">
+                                <div class="g-recaptcha" data-sitekey="6LcD3XkUAAAAABAoO2p4WOoBGg6uRyCoVCcGNCFV"></div>
+                            </div>
+
+                            <div class="">
+                                <input {{disabled}} class="btn {{submit_button_style}} btn-embossed" type="submit" value="Verify" name="btn_verify">
+                                <!-- <button {{disabled}} class="btn btn-primary btn-embossed" type="submit" value="Verify" name="btn_verify">Submit</button> -->
+                            </div>
+
+                            <div class="mt-2 mb-2">
+                                Didn't receive the code?<br />
+                                <input class="btn btn-outline-info" type="submit" value="send Code again" name="btn_new_code">
+                            </div>
+                        </form>
+
+                        <!-- {% if next_page_link %}
+                        <a href="{{next_page_link}}" class="btn btn-link">{{next_page_text}}</a>
+                        {% endif %} -->
+
+                        <p class="p-2 text-muted small animated bounce delay-3s">© {{application_copywrite}}</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            function autotab(current, nextFieldID) {
+                if (current.getAttribute &&
+                    current.value.length == current.getAttribute("maxlength")) {
+                    document.getElementById(nextFieldID).focus()
+                }
+            }
+        </script>
+
+    </body>
+
+</html>
+    
