@@ -1,6 +1,12 @@
 # my config files
 *.cfg
 
+# my log files
+*.log
+
+# my ini files
+*.ini
+
 .vscode/
 
 .vscode/*
